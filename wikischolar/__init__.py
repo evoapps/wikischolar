@@ -1,0 +1,1 @@
+from wikischolar import tasks
