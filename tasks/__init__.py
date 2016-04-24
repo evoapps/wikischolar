@@ -2,7 +2,7 @@
 from invoke import task, run, Collection
 
 from .get import get
-from .article_quality import article_quality
+from .quality import quality
 from .publish import publish
 
 
@@ -15,4 +15,4 @@ def clean():
         run(cmd.format(pattern))
 
 
-namespace = Collection(clean, get, article_quality, publish)
+namespace = Collection(clean, get, quality, publish)
