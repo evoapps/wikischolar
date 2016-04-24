@@ -16,7 +16,7 @@ def get():
 def get_page_text(title):
     site = pywikibot.Site('en', 'wikipedia')
     page = pywikibot.Page(site, title)
-    return page.text
+    return page.get()
 
 
 def convert_wiki_to_table(wiki_text):
