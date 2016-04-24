@@ -1,2 +1,9 @@
-# Editor
+# wiki
+apicache/
+throttle.ctrl
+
+# editor
 *.swp
+
+# os
+.DS_Store
