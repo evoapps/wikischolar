@@ -1,3 +1,6 @@
+# reproducible
+data/
+
 # python
 __pycache__/
 
