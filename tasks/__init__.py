@@ -2,8 +2,8 @@
 from invoke import task, run, Collection
 
 from .get import get_table
+from .fill import fill_ids
 from .quality import quality
-from .publish import publish
 
 
 @task
@@ -15,4 +15,4 @@ def clean():
         run(cmd.format(pattern))
 
 
-namespace = Collection(clean, get_table, quality, publish)
+namespace = Collection(get_table, fill_ids, quality, clean)
