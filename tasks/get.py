@@ -10,15 +10,17 @@ if not DATA.exists():
     DATA.mkdir()
 
 
-@task(help=dict(save_all="Write each stage of the pipeline to the data dir."))
-def get(save_all=False):
+@task
+def get_table(title, output):
     """Retrieve a table of articles from a wiki page."""
-    wiki_text = get_page_text('User:Smallbones/1000_random#Data')
+    wiki_text = get_page_text(title)
     data = convert_wiki_to_table(wiki_text)
-    data.to_csv(unipath.Path(DATA, 'article_data.csv'), index=False)
 
-    if save_all:
-        unipath.Path(DATA, 'wiki_text.mediawiki').write_file(wiki_text)
+    dst = unipath.Path(output)
+    if not dst.parent.exists():
+        dst.parent.mkdir(True)
+
+    data.to_csv(dst, index=False)
 
 
 def get_page_text(title):

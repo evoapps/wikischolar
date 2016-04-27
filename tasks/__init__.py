@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from invoke import task, run, Collection
 
-from .get import get
+from .get import get_table
 from .quality import quality
 from .publish import publish
 
@@ -15,4 +15,4 @@ def clean():
         run(cmd.format(pattern))
 
 
-namespace = Collection(clean, get, quality, publish)
+namespace = Collection(clean, get_table, quality, publish)
