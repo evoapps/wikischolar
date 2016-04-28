@@ -3,6 +3,7 @@ from invoke import task
 import pywikibot
 import pandas
 import pypandoc
+import unipath
 
 
 @task(aliases=['get'])
@@ -11,6 +12,7 @@ def get_table(title, output):
     wiki_text = get_page_text(title)
     table = convert_wiki_to_table(wiki_text)
     data = tidy_wiki_table(table)
+    mkdir(output)
     data.to_csv(output, index=False)
 
 
@@ -31,3 +33,9 @@ def tidy_wiki_table(table):
     slugify = lambda s: s.strip('|').lower().replace(' ', '_')
     data = table.rename(columns=slugify)
     return data
+
+
+def mkdir(dst):
+    dst_dir = unipath.Path(dst).parent
+    if not dst_dir.exists():
+        dst_dir.mkdir(parents=True)
