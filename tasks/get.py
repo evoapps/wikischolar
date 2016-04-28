@@ -5,7 +5,7 @@ import pandas
 import pypandoc
 
 
-@task
+@task(aliases=['get'])
 def get_table(title, output):
     """Retrieve a table of articles from a wiki page."""
     wiki_text = get_page_text(title)

@@ -2,8 +2,8 @@
 from invoke import task, run, Collection
 
 from .get import get_table
-from .fill import fill_ids
-from .quality import quality
+from .fill import fill_yearly_ids
+from .quality import wp10_quality
 
 
 @task
@@ -15,4 +15,4 @@ def clean():
         run(cmd.format(pattern))
 
 
-namespace = Collection(get_table, fill_ids, quality, clean)
+namespace = Collection(get_table, fill_yearly_ids, wp10_quality, clean)
