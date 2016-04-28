@@ -1,5 +1,6 @@
 # reproducible
 data/
+*.html
 
 # python
 __pycache__/
@@ -16,3 +17,6 @@ throttle.ctrl
 
 # os
 .DS_Store
+
+# analysis
+.Rproj.user

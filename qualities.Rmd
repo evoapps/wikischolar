@@ -1,0 +1,17 @@
+---
+title: "Wikipedia article quality over time"
+author: "Pierce Edmiston"
+output:
+  html_document:
+    theme: flatly
+---
+
+```{r}
+library(ggplot2)
+
+library(wikischolarlib)
+data(qualities)
+
+ggplot(qualities, aes(x = timestamp, y = FA)) +
+  geom_line(aes(group = article))
+```
