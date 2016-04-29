@@ -25,11 +25,8 @@ def wp10_quality(revisions, output):
     chunks = unassessed.groupby(arange(len(unassessed))//MAX_ORES_REVIDS)
     workers = min(MAX_ORES_THREADS, len(chunks))
     with futures.ThreadPoolExecutor(workers) as executor:
-        qualities = executor.map(get_wp10, chunks)
-
-    quality = pandas.concat(qualities)
-    assessed = unassessed.merge(quality)
-    assessed.to_csv(output, index=False)
+        results = executor.map(get_wp10, chunks)
+    pandas.concat(results).to_csv(output, index=False)
 
 
 def get_qualities(articles_group, endpoint, score_formatter):

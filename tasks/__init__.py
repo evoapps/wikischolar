@@ -7,12 +7,19 @@ from .fill import fill_yearly_ids
 from .quality import wp10_quality
 
 
-
 @task
 def clean():
     """Remove junk files."""
     cmd = 'rm -rf {}'
-    patterns = ['*.lwp', 'apicache', 'throttle.ctrl']
+    patterns = [
+        # wiki
+        'apicache',
+        'throttle.ctrl',
+        '*.lwp',
+
+        # knitr
+        '*-figs/',
+    ]
     for pattern in patterns:
         run(cmd.format(pattern))
 

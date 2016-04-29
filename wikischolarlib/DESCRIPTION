@@ -1,8 +1,12 @@
 Package: wikischolarlib
-Title: What the Package Does (one line, title case)
+Title: Wikipedia Article Quality Histories
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph)
+Authors@R: person("Pierce", "Edmiston", email = "pierce@evoapps.xyz", role = c("aut", "cre"))
+Description:
+    wikischolarlib is a library for storing historical article quality data.
+    The article quality data is obtained outside of this package. This package
+    is intended to distribute particular datasets associated with particular
+    analyses and research questions.
 Depends:
     R (>= 3.2.3)
 License: What license is it under?

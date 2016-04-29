@@ -1,4 +1,5 @@
 from invoke import task, run
+import unipath
 
 R_PKG_NAME = 'wikischolarlib'
 
@@ -19,3 +20,13 @@ def install():
     ]
     for r_command in r_commands:
         run("Rscript -e '{}'".format(r_command))
+
+
+@task
+def reports():
+    """Compile knitr reports."""
+    proj_root = unipath.Path(__file__).absolute().ancestor(2)
+    cmd = 'rmarkdown::render("{}")'
+    for rmd in proj_root.walk('*.Rmd'):
+        rmd_cmd = cmd.format(rmd)
+        run("Rscript -e '{}'".format(rmd_cmd))

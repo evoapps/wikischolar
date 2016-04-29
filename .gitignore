@@ -1,6 +1,7 @@
 # reproducible
 data/
 *.html
+*-figs/
 
 # python
 __pycache__/
@@ -20,3 +21,4 @@ throttle.ctrl
 
 # analysis
 .Rproj.user
+!wikischolarlib/data/
