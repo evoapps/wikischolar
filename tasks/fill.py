@@ -1,11 +1,13 @@
 from concurrent import futures
 import functools
+import time
 
 from invoke import task
 import pywikibot
 import pandas
 
 MAX_WORKERS = 4
+CURRENT_YEAR = time.localtime().tm_year
 
 @task(aliases=['fill'])
 def fill_yearly_ids(articles, output):
@@ -26,10 +28,17 @@ def sample_revisions(article, offset):
     """Sample the revisions for an article at a given offset."""
     title = article.article
     revisions = get_revisions(title)
+
     revisions.set_index('timestamp', inplace=True)
     sample = revisions.resample(offset).last()
-    # Fill revids for years without edits with the previous year's revid
+
+    # Fill missing revids for years w/o edits with the previous year's revid
     sample['revid'] = sample.revid.fillna(method='bfill').astype(int)
+
+    # Drop this year's edits
+    last_valid_edit_date = '{}-12-31'.format(CURRENT_YEAR-1)
+    sample = sample.ix[:last_valid_edit_date]
+
     sample.reset_index(inplace=True)
     sample.insert(0, 'article', title)
     return sample

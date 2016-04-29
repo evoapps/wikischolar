@@ -62,5 +62,5 @@ def format_wp10_scores(response_json):
 
 
 def unfold(objects, name):
-    """Pull the named value out of a Series of objects."""
+    """Pull the named value out of a Series of dicts."""
     return objects.apply(lambda x: x[name])
