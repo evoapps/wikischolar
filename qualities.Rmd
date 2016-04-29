@@ -34,15 +34,9 @@ read_chunk("qualities.R")
 ```{r, quality-by-date}
 ```
 
-```{r, quality-by-date-average}
-```
-
 # Article quality by age
 
 ```{r, quality-by-age}
-```
-
-```{r, quality-by-age-average}
 ```
 
 ```{r, hist-article-ages}
