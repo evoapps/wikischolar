@@ -4,14 +4,70 @@ author: "Pierce Edmiston"
 output:
   html_document:
     theme: flatly
+    toc: true
 ---
 
-```{r}
-library(ggplot2)
+```{r, config, echo = FALSE}
+library(knitr)
+opts_chunk$set(
+  echo = FALSE,
+  message = FALSE
+)
+```
 
+```{r, setup}
+library(ggplot2)
+library(dplyr)
+```
+
+# Data
+
+```{r, data, echo = TRUE}
 library(wikischolarlib)
 data(qualities)
+```
 
-ggplot(qualities, aes(x = timestamp, y = FA)) +
-  geom_line(aes(group = article))
+```{r, theme}
+base_plot <- ggplot(qualities) +
+  theme_minimal() +
+  theme(
+    axis.ticks = element_blank()
+  )
+```
+
+# Article quality by date
+
+```{r}
+base_plot +
+  geom_line(aes(x = timestamp, y = FA, group = article)) +
+  ggtitle("Article quality by date")
+```
+
+```{r}
+base_plot +
+  geom_line(aes(x = timestamp, y = FA, group = 1),
+            stat = "summary", fun.y = "mean") +
+  ggtitle("Average article quality by date")
+```
+
+# Article quality by age
+
+```{r}
+base_plot +
+  geom_line(aes(x = age, y = FA, group = article)) +
+  ggtitle("Article quality by date")
+```
+
+```{r}
+base_plot +
+  geom_line(aes(x = age, y = FA, group = 1),
+            stat = "summary", fun.y = "mean") +
+  ggtitle("Average article quality by date")
+```
+
+```{r}
+extant <- qualities %>% group_by(article) %>% filter(age == max(age))
+(base_plot %+% extant) +
+  geom_histogram(aes(x = age), binwidth = 1) +
+  ggtitle("Article ages in sample")
 ```
