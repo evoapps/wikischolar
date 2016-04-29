@@ -17,3 +17,19 @@ Then configure pywikibot by modifying user-config.py with your accounts.
 After that, you can install the remaining requirements with::
 
     pip install -r requirements.txt
+
+Install wikischolarlib
+======================
+
+wikischolarlib is an R package for bundling up data collected
+using wikischolar. To install the wikischolarlib you can use the 
+R package devtools and install it from github::
+
+    devtools::install_github("wikischolar", "evoapps", subdir = "wikischolarlib")
+
+Right now, wikischolarlib is included with the wikischolar project.
+If you modify your local copy of wikischolarlib, you can install
+the modified version using devtools as well::
+
+    # working directory is wikischolar project root
+    devtools::install("wikischolarlib")
