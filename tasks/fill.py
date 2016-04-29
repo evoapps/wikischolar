@@ -9,6 +9,7 @@ import pandas
 MAX_WORKERS = 4
 CURRENT_YEAR = time.localtime().tm_year
 
+
 @task(aliases=['fill'])
 def fill_yearly_ids(articles, output):
     """Retrieve the revision ids for each article sampled at year's end."""
@@ -19,14 +20,13 @@ def fill_yearly_ids(articles, output):
     workers = min(MAX_WORKERS, len(articles))
 
     with futures.ThreadPoolExecutor(workers) as executor:
-        revisions = executor.map(sample_revisions_yearly, articles.itertuples())
-
-    pandas.concat(revisions).to_csv(output, index=False)
+        results = executor.map(sample_revisions_yearly, articles.itertuples())
+    pandas.concat(results).to_csv(output, index=False)
 
 
 def sample_revisions(article, offset):
     """Sample the revisions for an article at a given offset."""
-    title = article.article
+    title = article.title
     revisions = get_revisions(title)
 
     revisions.set_index('timestamp', inplace=True)
@@ -40,7 +40,7 @@ def sample_revisions(article, offset):
     sample = sample.ix[:last_valid_edit_date]
 
     sample.reset_index(inplace=True)
-    sample.insert(0, 'article', title)
+    sample.insert(0, 'title', title)
     return sample
 
 
