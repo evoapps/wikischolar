@@ -12,7 +12,8 @@ library(knitr)
 opts_chunk$set(
   echo = FALSE,
   message = FALSE,
-  fig.path = 'qualities-figs/'
+  fig.path = "qualities-figs/",
+  cache.path = "qualities-cache/"
 )
 
 read_chunk("qualities.R")
@@ -21,7 +22,7 @@ read_chunk("qualities.R")
 ```{r, setup}
 ```
 
-# Data
+# Methods
 
 ```{r, data, echo = TRUE}
 ```
@@ -29,13 +30,40 @@ read_chunk("qualities.R")
 ```{r, theme}
 ```
 
-# Article quality over time
+## Sample articles
+
+1000 articles from the English Wikipedia were selected at random. Articles ranged in age from `r min(random1000$age)` to `r max(random1000$age)` years old.
+
+```{r, ages, fig.width = 4, fig.height = 4}
+```
+
+## Article quality
+
+Article quality was estimated using a machine learning algorithm trained to detect an article's quality rank, [wp10](https://meta.wikimedia.org/wiki/ORES/wp10). Articles range in quality from Stub articles to Featured Articles. The output of the wp10 model provides probabilities for each of the possible article classes. These probabilities were aggregated into a single, continuous measure of article quality.
+
+# Results
+
+```{r, date-mod, results = "hide"}
+```
+
+```{r, age-mod, results = "hide"}
+```
 
 ```{r, quality, fig.width = 10}
 ```
 
-```{r, hist-article-ages}
+## Models
+
+The `date_mod` predicts article quality from the date at which the article was sampled, independent of the article's age.
+
+```{r, date-mod, echo = 1}
 ```
 
-```{r, age-lmer, echo = 1}
+The `age_mod` predicts article quality from the age of the article, independent of the date at which the article was sampled.
+
+```{r, age-mod, echo = 1}
 ```
+
+# Discussion
+
+Wikipedia articles are better today than they were when they were first written. Although articles have gotten better as Wikipedia itself ages, the age of an individual article is a stronger predictor of article quality. These results support the hypothesis that Wikipedia articles incrementally improve as they accumultate edits.

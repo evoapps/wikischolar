@@ -15,11 +15,12 @@ article_classes <- c("Stub", "Start", "C", "B", "GA", "FA")
 random1000$prediction <- factor(random1000$prediction, levels = article_classes)
 
 # Compute article age
+random1000$year <- year(random1000$timestamp)
 random1000 <- random1000 %>%
   group_by(title) %>%
-  mutate(year0 = min(year(timestamp))) %>%
+  mutate(year0 = min(year)) %>%
   ungroup %>%
-  mutate(age = year(timestamp) - year0)
+  mutate(age = year - year0)
 
 # Calculate continuous article quality
 weighted_quality <- function(Stub, Start, C, B, GA, FA) {

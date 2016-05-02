@@ -2,9 +2,12 @@
 library(dplyr)
 library(broom)
 library(lubridate)
+
 library(ggplot2)
 library(gridExtra)
+
 library(lme4)
+library(AICcmodavg)
 
 ## ---- data
 library(wikischolarlib)
@@ -28,22 +31,42 @@ scale_x_age <- scale_x_continuous("article age", breaks = seq(0, max_age, by = 2
 scale_y_quality <- scale_y_continuous("article quality", breaks = 0:6)
 quality_coords <- coord_cartesian(ylim = c(1, 6))
 
-## ---- models
-random1000$date <- year(random1000$timestamp) - 2001
-date_mod <- lmer(quality ~ date + (date|title), data = random1000)
-tidy(date_mod, effect = "fixed")
+## ---- ages
+extant <- random1000 %>% group_by(title) %>% filter(age == max(age))
+(base_plot %+% extant) +
+  ggtitle("Article ages in sample") +
+  geom_histogram(aes(x = age), color = colors[["blue"]], fill = NA, binwidth = 1) +
+  scale_x_age
 
+## ---- date-mod
+date_mod <- lm(quality ~ year, data = random1000)
+tidy(date_mod)
+
+date_preds_x <- unique(random1000[,c("timestamp", "year")])
+date_preds_y <- predict(date_mod, date_preds_x, se = TRUE)
+date_preds <- cbind(date_preds_x, date_preds_y) %>%
+  select(timestamp, quality = fit, se = se.fit)
+
+## ---- age-mod
 age_mod <- lmer(quality ~ age + (age|title), data = random1000)
-tidy(age_mod, effect = "fixed")
+tidy(age_mod, effects = "fixed")
+
+age_preds_x <- data.frame(age = unique(random1000$age))
+age_preds_y <- predictSE(age_mod, age_preds_x, se = TRUE)
+age_preds <- cbind(age_preds_x, age_preds_y) %>%
+  select(age, quality = fit, se = se.fit)
 
 ## ---- quality
 date <- base_plot +
   ggtitle("Article quality by date") +
   geom_line(aes(x = timestamp, y = quality, group = title),
             color = colors[["green"]], alpha = 0.2) +
-  geom_line(aes(x = timestamp, y = quality, group = 1),
+  geom_point(aes(x = timestamp, y = quality, group = 1),
             stat = "summary", fun.y = "mean",
-            size = 2.0, color = "black", alpha = 0.6) +
+            size = 2, color = "black") +
+  geom_line(aes(x = timestamp, y = quality),
+            data = date_preds,
+            size = 2, color = colors[["orange"]], alpha = 0.6) +
   scale_x_date("date") +
   scale_y_quality +
   quality_coords
@@ -52,22 +75,14 @@ age <- base_plot +
   ggtitle("Article quality by age") +
   geom_line(aes(x = age, y = quality, group = title),
             color = colors[["blue"]], alpha = 0.2) +
-  geom_line(aes(x = age, y = quality, group = 1),
+  geom_point(aes(x = age, y = quality, group = 1),
             stat = "summary", fun.y = "mean",
-            size = 2.0, color = "black", alpha = 0.6) +
+            size = 2, color = "black") +
+  geom_line(aes(x = age, y = quality),
+            data = age_preds,
+            size = 2, color = colors[["orange"]], alpha = 0.6) +
   scale_x_age +
   scale_y_quality +
   quality_coords
 
 grid.arrange(date, age, nrow = 1)
-
-## ---- hist-article-ages
-extant <- random1000 %>% group_by(title) %>% filter(age == max(age))
-(base_plot %+% extant) +
-  ggtitle("Article ages in sample") +
-  geom_histogram(aes(x = age), color = colors[["blue"]], fill = NA, binwidth = 1) +
-  scale_x_age
-
-## ---- age-lmer
-age_mod <- lmer(quality ~ age + (age|title), data = random1000)
-tidy(age_mod, effect = "fixed")
