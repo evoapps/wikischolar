@@ -1,10 +1,32 @@
 wikischolar
 ===========
 
-Look up historical article quality data for Wikipedia articles.
+This research project provides tools for looking up historical article quality
+data for Wikipedia articles using the Wikimedia Foundations Objective Revision
+Evalutation Service (ORES)
+<https://meta.wikimedia.org/wiki/Objective_Revision_Evaluation_Service>.
+
+To install and use the wikischolar tool, clone the repo and install the
+required python packages. It is recommended you install these packages
+to a virtualenv::
+
+    $ virtualenv --python=python3 ~/.venvs/wikischolar
+    $ source ~/.venvs/wikischolar/bin/activate
+    (wikischolar) $ cd wikischolar
+    (wikischolar) wikischolar/$ pip install -r requirements.txt
+
+The API for wikischolar uses invoke commands that can be issued from the
+command line::
+
+    (wikischolar) wikischolar/$ inv --list      # List available commands
+    (wikischolar) wikischolar/$ inv -h quality  # Get help on quality command
 
 1000 random articles
 --------------------
+
+Get historical article quality data for 1000 random articles. This project is a
+collaboration with Smallbones
+<https://en.wikipedia.org/wiki/User:Smallbones>.
 
 First, get the list of articles to research. To get the articles
 from a mediawiki table, use the ``get_table`` command::
