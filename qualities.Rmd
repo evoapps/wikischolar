@@ -22,7 +22,13 @@ read_chunk("qualities.R")
 ```{r, setup}
 ```
 
+Is Wikipedia getting better? This report investigates two approaches to this question. First, Wikipedia in general could be improving, in which case we would expect the average article to be of higher quality in 2015 than it was in previous years. Another way to measure quality changes over time is in terms of the age of individual articles, in which case we would expect to see article quality tend to improve as the article ages.
+
+To answer these questions, 1000 Wikipedia articles were randomly sampled, and an estimate of their quality was obtained by submitting yearly versions of each article to a machine learning algorithm trained to predict an article's quality class. The results show that Wikipedia is in general improving, and that articles tend to improve in quality as they age. Although both of these relationships are positive, the rate of change is different. Overall Wikipedia is improving more rapidly, whereas older articles tend to improve less rapidly.
+
 # Methods
+
+The data used in this report is available on [github](https://github.com/evoapps/wikischolar), and can be installed using the following command: `devtools::install_github('evoapps/wikischolar', subdir = 'wikischolarlib')`.
 
 ```{r, data, echo = TRUE}
 ```
@@ -39,7 +45,7 @@ read_chunk("qualities.R")
 
 ## Article quality
 
-Article quality was estimated using a machine learning algorithm trained to detect an article's quality rank, [wp10](https://meta.wikimedia.org/wiki/ORES/wp10). Articles range in quality from Stub articles to Featured Articles. The output of the wp10 model provides probabilities for each of the possible article classes. These probabilities were aggregated into a single, continuous measure of article quality.
+Article quality was estimated using a machine learning algorithm trained to detect an article's quality rank, [wp10](https://meta.wikimedia.org/wiki/ORES/wp10). Articles range in quality from Stub articles to Featured Articles. The output of the wp10 model provides probabilities for each of the possible article classes. These probabilities were aggregated into a single, continuous measure of article quality, which ranged from 1 to 6.
 
 # Results
 
@@ -66,4 +72,8 @@ The `age_mod` predicts article quality from the age of the article, independent 
 
 # Discussion
 
-Wikipedia articles are better today than they were when they were first written. Although articles have gotten better as Wikipedia itself ages, the age of an individual article is a stronger predictor of article quality. These results support the hypothesis that Wikipedia articles incrementally improve as they accumultate edits.
+As Wikipedia itself has gotten older, the average article quality has tended to increase.  Moreover, the rate of change has also increased. One possible explanation for this finding is that editors have become more efficient in their ability to make large improvements to articles. For example, automated tools used to monitor article quality may make it easier to direct editor attention to articles that are lacking in quality.
+
+As an individual Wikipedia article ages, it also tends to improve in quality, but older articles improve less than younger articles. Although this analysis implies that article quality may asymptote at a particular age, this conclusion is only relevant to the particular measure of article quality used in this report: that of an article's quality class.
+
+Wikipedia articles can be assigned categorical article classes that range from _Stub_ to _Featured Article_. Since _Featured Article_ is the highest obtainable class, this measure of article quality cannot by itself determine whether or not article quality has an upper limit. The alternative view is that edits to articles continue to improve article quality, however minor the improvement, indefinitely and without asymptote.
