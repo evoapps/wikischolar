@@ -5,6 +5,7 @@ from . import R
 from .get import get_table
 from .fill import fill_yearly_ids
 from .quality import wp10_quality
+from .edits import count_yearly_edits
 
 
 @task
@@ -24,4 +25,14 @@ def clean():
         run(cmd.format(pattern))
 
 
-namespace = Collection(get_table, fill_yearly_ids, wp10_quality, clean, R)
+namespace = Collection(
+    # modules
+    R,
+    # local tasks
+    clean,
+    # wikischolar tasks
+    get_table,
+    fill_yearly_ids,
+    wp10_quality,
+    count_yearly_edits,
+)

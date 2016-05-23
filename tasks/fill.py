@@ -6,6 +6,8 @@ from invoke import task
 import pywikibot
 import pandas
 
+from .util import get_revisions
+
 MAX_WORKERS = 4
 CURRENT_YEAR = time.localtime().tm_year
 
@@ -42,13 +44,3 @@ def sample_revisions(article, offset):
     sample.reset_index(inplace=True)
     sample.insert(0, 'title', title)
     return sample
-
-
-def get_revisions(title):
-    """Get all of the revisions for an article."""
-    site = pywikibot.Site('en', 'wikipedia')
-    page = pywikibot.Page(site, title)
-    # hack to turn pywikibot Revisions into records for pandas
-    revision_list = [revision.__dict__ for revision in page.revisions()]
-    revisions = pandas.DataFrame.from_records(revision_list)
-    return revisions
