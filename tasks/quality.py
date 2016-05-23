@@ -17,16 +17,35 @@ MAX_ORES_REVIDS = 50
 
 @task(aliases=['quality'])
 def wp10_quality(revisions, output):
-    """Obtain article quality estimates from the ORES."""
+    """Obtain article quality estimates from the ORES.
+
+    Revisions are read from an existing csv and saved to a new csv.
+    
+    Args:
+        revisions (str): Path to an existing csv of revisions with revids.
+        output (str): Path to a new csv of revids with wp10 article qualities.
+    """
     unassessed = pandas.read_csv(revisions)
+    qualities = get_wp10_qualities(unassessed)
+    qualities.to_csv(output, index=False)
+
+
+def get_wp10_qualities(revisions):
+    """Query the ORES wp10 article quality model for each revision in a table.
+
+    Args:
+        revisions (pandas.DataFrame): A table of article revisions with ids.
+    Returns:
+        A pandas.DataFrame of revisions.
+    """
     get_wp10 = functools.partial(get_qualities, endpoint=WP10_URL,
                                  score_formatter=format_wp10_scores)
 
-    chunks = unassessed.groupby(arange(len(unassessed))//MAX_ORES_REVIDS)
+    chunks = revisions.groupby(arange(len(revisions))//MAX_ORES_REVIDS)
     workers = min(MAX_ORES_THREADS, len(chunks))
     with futures.ThreadPoolExecutor(workers) as executor:
         results = executor.map(get_wp10, chunks)
-    pandas.concat(results).to_csv(output, index=False)
+    return pandas.concat(results)
 
 
 def get_qualities(articles_group, endpoint, score_formatter):

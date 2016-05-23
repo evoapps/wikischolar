@@ -16,14 +16,25 @@ CURRENT_YEAR = time.localtime().tm_year
 def fill_yearly_ids(articles, output):
     """Retrieve the revision ids for each article sampled at year's end."""
     articles = pandas.read_csv(articles)
+    revids = get_yearly_ids(articles)
+    revids.to_csv(output, index=False)
 
+
+def get_yearly_ids(articles):
+    """Get the last revid of each year of an article's existence.
+
+    Args:
+        articles (pandas.DataFrame): A table of articles with titles.
+    Returns:
+        A pandas.DataFrame of article titles with year end revids.
+    """
     offset = pandas.tseries.offsets.YearEnd()
     sample_revisions_yearly = functools.partial(sample_revisions, offset=offset)
     workers = min(MAX_WORKERS, len(articles))
 
     with futures.ThreadPoolExecutor(workers) as executor:
         results = executor.map(sample_revisions_yearly, articles.itertuples())
-    pandas.concat(results).to_csv(output, index=False)
+    return pandas.concat(results)
 
 
 def sample_revisions(article, offset):
