@@ -13,7 +13,7 @@ MAX_WORKERS = 4
 @task(aliases=['edits'])
 def count_yearly_edits(articles, output):
     """Count edits per year for each article.
-    
+
     Articles are read from a csv and results are saved to a csv.
 
     Args:
@@ -21,7 +21,7 @@ def count_yearly_edits(articles, output):
         output (str): Path to new csv of edits to save.
     """
     articles = pandas.read_csv(articles)
-    edits = fetch_yearly_edits(articles)
+    edits = get_yearly_edits(articles)
     edits.to_csv(output, index=False)
 
 
@@ -45,7 +45,7 @@ def get_yearly_edits(articles):
 
 def count_edits(article, offset):
     """Count the number of revisions for an article in a given timespan.
-    
+
     Args:
         article: A named tuple containing the article title.
         offset: A pandas.tseries.offset to group revisions by.
