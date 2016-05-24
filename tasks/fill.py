@@ -32,21 +32,22 @@ def fill_yearly_ids(articles):
 def sample_revisions(article, offset):
     """Sample the revisions for an article at a given offset."""
     title = article.title
+
     try:
         revisions = get_revisions(title)
     except pywikibot.NoPage:
         return pandas.DataFrame()
-    else:
-        revisions.set_index('timestamp', inplace=True)
-        sample = revisions.resample(offset).last()
 
-        # Fill missing revids for years w/o edits with the previous year's revid
-        sample['revid'] = sample.revid.fillna(method='bfill').astype(int)
+    revisions.set_index('timestamp', inplace=True)
+    sample = revisions.resample(offset).last()
 
-        # Drop this year's edits
-        last_valid_edit_date = '{}-12-31'.format(CURRENT_YEAR-1)
-        sample = sample.ix[:last_valid_edit_date]
+    # Fill missing revids for years w/o edits with the previous year's revid
+    sample['revid'] = sample.revid.fillna(method='bfill').astype(int)
 
-        sample.reset_index(inplace=True)
-        sample.insert(0, 'title', title)
-        return sample
+    # Drop this year's edits
+    last_valid_edit_date = '{}-12-31'.format(CURRENT_YEAR-1)
+    sample = sample.ix[:last_valid_edit_date]
+
+    sample.reset_index(inplace=True)
+    sample.insert(0, 'title', title)
+    return sample

@@ -2,7 +2,7 @@ from invoke import task, run, Collection
 
 import pandas
 
-from . import get, fill, quality, edits
+from . import get, fill, quality, edits, views
 from . import R
 from .util import mkdir
 
@@ -49,8 +49,21 @@ def count_yearly_edits(articles, output):
         output (str): Path to new csv of edits to save.
     """
     articles = pandas.read_csv(articles)
-    edits = edits.count_yearly_edits(articles)
-    edits.to_csv(output, index=False)
+    counts = edits.count_yearly_edits(articles)
+    counts.to_csv(output, index=False)
+
+
+@task(aliases=['views'])
+def yearly_page_views(articles, output):
+    """Get yearly page view sums for each article.
+
+    Args:
+        articles (str): Path to existing csv of article titles.
+        output (str): Path to new csv of edits to save.
+    """
+    articles = pandas.read_csv(articles)
+    totals = views.yearly_page_views(articles)
+    totals.to_csv(output, index=False)
 
 
 @task
@@ -80,4 +93,5 @@ namespace = Collection(
     fill_yearly_ids,
     wp10_qualities,
     count_yearly_edits,
+    yearly_page_views,
 )

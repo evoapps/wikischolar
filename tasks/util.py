@@ -3,6 +3,12 @@ import pandas
 import unipath
 
 
+def get_page(title):
+    site = pywikibot.Site('en', 'wikipedia')
+    page = pywikibot.Page(site, title)
+    return page
+
+
 def get_revisions(title):
     """Get all of the revisions for an article.
 
@@ -13,8 +19,7 @@ def get_revisions(title):
     Returns:
         A pandas.DataFrame of revisions.
     """
-    site = pywikibot.Site('en', 'wikipedia')
-    page = pywikibot.Page(site, title)
+    page = get_page(title)
     # hack to turn pywikibot Revisions into records for pandas
     revision_list = [revision.__dict__ for revision in page.revisions()]
     revisions = pandas.DataFrame.from_records(revision_list)

@@ -52,3 +52,8 @@ Finally, we can get the ORES scores for each of the revisions
 with the ``quality`` command::
 
     $ inv wp10_quality data/1000_random/revisions.csv --output=data/1000_random/qualities.csv
+
+You can also get summaries of yearly edits and page views::
+
+    $ inv yearly_page_views data/1000_random/articles.csv data/1000_random/views.csv
+    $ inv count_yearly_edits data/1000_random/articles.csv data/1000_random/edits.csv
