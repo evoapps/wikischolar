@@ -4,6 +4,7 @@ import functools
 from invoke import task
 
 import pandas
+import pywikibot
 
 from .util import get_revisions
 
@@ -38,11 +39,14 @@ def count_edits(article, offset):
         A pandas.DataFrame of edit counts for this article.
     """
     title = article.title
-    revisions = get_revisions(title)
+    try:
+        revisions = get_revisions(title)
+    except pywikibot.NoPage:
+        return pandas.DataFrame()
+    else:
+        revisions.set_index('timestamp', inplace=True)
+        edits = revisions.resample(offset).count()
 
-    revisions.set_index('timestamp', inplace=True)
-    edits = revisions.resample(offset).count()
-
-    edits.reset_index(inplace=True)
-    edits.insert(0, 'title', title)
-    return edits
+        edits.reset_index(inplace=True)
+        edits.insert(0, 'title', title)
+        return edits

@@ -1,6 +1,6 @@
 """Test wikischolar commands for a sample article.
 
-These tests are run live against the Wikipedia servers.
+Warning! These tests are run live against the Wikipedia servers.
 """
 import pytest
 import pandas
@@ -27,3 +27,8 @@ def test_yearly_edits(articles):
 def test_wp10_quality(revisions):
     qualities = wikischolar.quality.wp10_qualities(revisions)
     assert len(qualities) == 1
+
+def test_missing_article(articles):
+    missing = pandas.DataFrame({'title': ['not-a-real-article']})
+    edits = wikischolar.edits.count_yearly_edits(missing)
+    assert len(edits) == 0
