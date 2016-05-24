@@ -31,4 +31,5 @@ def test_wp10_quality(revisions):
 def test_missing_article(articles):
     missing = pandas.DataFrame({'title': ['not-a-real-article']})
     edits = wikischolar.edits.count_yearly_edits(missing)
-    assert len(edits) == 0
+    revids = wikischolar.fill.fill_yearly_ids(missing)
+    assert len(edits) == len(revids) == 0
