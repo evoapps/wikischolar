@@ -1,7 +1,6 @@
 from concurrent import futures
 import functools
 
-from invoke import task
 import pywikibot
 import pandas
 from numpy import arange
@@ -15,22 +14,7 @@ MAX_ORES_THREADS = 4
 MAX_ORES_REVIDS = 50
 
 
-@task(aliases=['quality'])
-def wp10_quality(revisions, output):
-    """Obtain article quality estimates from the ORES.
-
-    Revisions are read from an existing csv and saved to a new csv.
-    
-    Args:
-        revisions (str): Path to an existing csv of revisions with revids.
-        output (str): Path to a new csv of revids with wp10 article qualities.
-    """
-    unassessed = pandas.read_csv(revisions)
-    qualities = get_wp10_qualities(unassessed)
-    qualities.to_csv(output, index=False)
-
-
-def get_wp10_qualities(revisions):
+def wp10_qualities(revisions):
     """Query the ORES wp10 article quality model for each revision in a table.
 
     Args:

@@ -17,13 +17,13 @@ def revisions():
     return pandas.DataFrame({'revid': [691949610]})
 
 def test_yearly_ids(articles):
-    revids = wikischolar.fill.get_yearly_ids(articles)
+    revids = wikischolar.fill.fill_yearly_ids(articles)
     assert len(revids) > 0
 
 def test_yearly_edits(articles):
-    edits = wikischolar.edits.get_yearly_edits(articles)
+    edits = wikischolar.edits.count_yearly_edits(articles)
     assert len(edits) > 0
 
 def test_wp10_quality(revisions):
-    qualities = wikischolar.quality.get_wp10_qualities(revisions)
+    qualities = wikischolar.quality.wp10_qualities(revisions)
     assert len(qualities) == 1
