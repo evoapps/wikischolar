@@ -6,8 +6,13 @@ from . import get, fill, quality, edits, views
 from . import R
 from .util import mkdir
 
+# DRY docs
+ARTICLES = "Path to existing csv of articles with titles."
+OUTPUT = "Path to new csv to save."
 
-@task(aliases=['get'])
+
+@task(aliases=['get'],
+      help=dict(title="The title of the wiki page", output=OUTPUT))
 def get_table(title, output):
     """Retrieve a table of articles from a wiki page."""
     table = get.get_table(title)
@@ -15,7 +20,8 @@ def get_table(title, output):
     table.to_csv(output, index=False)
 
 
-@task(aliases=['fill'])
+@task(aliases=['fill'],
+      help=dict(articles=ARTICLES, output=OUTPUT))
 def fill_yearly_ids(articles, output):
     """Retrieve the revision ids for each article sampled at year's end."""
     articles = pandas.read_csv(articles)
@@ -23,44 +29,29 @@ def fill_yearly_ids(articles, output):
     revids.to_csv(output, index=False)
 
 
-@task(aliases=['quality'])
+@task(aliases=['quality'],
+      help=dict(revisions="Path to an existing csv of revisions with revids.",
+                output=OUTPUT))
 def wp10_qualities(revisions, output):
-    """Obtain article quality estimates from the ORES.
-
-    Revisions are read from an existing csv and saved to a new csv.
-
-    Args:
-        revisions (str): Path to an existing csv of revisions with revids.
-        output (str): Path to a new csv of revids with wp10 article qualities.
-    """
+    """Obtain article quality estimates from the ORES."""
     unassessed = pandas.read_csv(revisions)
     qualities = quality.wp10_qualities(unassessed)
     qualities.to_csv(output, index=False)
 
 
-@task(aliases=['edits'])
+@task(aliases=['edits'],
+      help=dict(articles=ARTICLES, output=OUTPUT))
 def count_yearly_edits(articles, output):
-    """Count edits per year for each article.
-
-    Articles are read from a csv and results are saved to a csv.
-
-    Args:
-        articles (str): Path to existing csv of article titles.
-        output (str): Path to new csv of edits to save.
-    """
+    """Count edits per year for each article."""
     articles = pandas.read_csv(articles)
     counts = edits.count_yearly_edits(articles)
     counts.to_csv(output, index=False)
 
 
-@task(aliases=['views'])
+@task(aliases=['views'],
+      help=dict(articles=ARTICLES, output=OUTPUT))
 def yearly_page_views(articles, output):
-    """Get yearly page view sums for each article.
-
-    Args:
-        articles (str): Path to existing csv of article titles.
-        output (str): Path to new csv of edits to save.
-    """
+    """Get yearly page view sums for each article."""
     articles = pandas.read_csv(articles)
     totals = views.yearly_page_views(articles)
     totals.to_csv(output, index=False)
