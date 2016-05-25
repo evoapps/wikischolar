@@ -6,6 +6,9 @@ from invoke import task
 import pandas
 import pywikibot
 
+import logging
+logger = logging.getLogger(__name__)
+
 from .util import get_revisions
 
 MAX_WORKERS = 4
@@ -39,14 +42,17 @@ def count_edits(article, offset):
         A pandas.DataFrame of edit counts for this article.
     """
     title = article.title
+
     try:
         revisions = get_revisions(title)
     except pywikibot.NoPage:
+        msg = 'counting edits: revisions for page {} not found'
+        logger.debug(msg)
         return pandas.DataFrame()
-    else:
-        revisions.set_index('timestamp', inplace=True)
-        edits = revisions.resample(offset).count()
 
-        edits.reset_index(inplace=True)
-        edits.insert(0, 'title', title)
-        return edits
+    revisions.set_index('timestamp', inplace=True)
+    edits = revisions.resample(offset).count()
+
+    edits.reset_index(inplace=True)
+    edits.insert(0, 'title', title)
+    return edits

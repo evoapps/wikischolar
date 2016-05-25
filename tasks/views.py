@@ -8,6 +8,9 @@ import requests
 
 from .util import get_page
 
+import logging
+logger = logging.getLogger(__name__)
+
 # Endpoint to wikimedia pageview API
 PAGEVIEW_URL = 'https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/all-agents/{title}/daily/{start}/{end}'
 
@@ -35,17 +38,21 @@ def yearly_page_views(articles):
 
 def sample_page_views(article, offset):
     title = article.title
+    page = get_page(title)
 
     try:
-        page = get_page(title)
+        start = page.oldest_revision['timestamp'].strftime(TIMEFORMAT)
     except pywikibot.NoPage:
+        msg = 'Page views requested for {} but no page was found'
+        print(msg.format(title))
+        logger.debug(msg.format(title))
         return pandas.DataFrame()
+    else:
+        end = TODAY
 
-    start = page.oldest_revision['timestamp'].strftime(TIMEFORMAT)
-    end = TODAY
     page_views = daily_page_views(title, start, end)
-
-    page_views['timestamp'] = pandas.to_datetime(page_views.timestamp, format=TIMEFORMAT+'00')
+    page_views['timestamp'] = pandas.to_datetime(page_views.timestamp,
+                                                 format=TIMEFORMAT+'00')
     page_views.set_index('timestamp', inplace=True)
     sums = page_views.resample(offset).sum()
     sums.reset_index(inplace=True)
@@ -54,8 +61,17 @@ def sample_page_views(article, offset):
 
 
 def daily_page_views(title, start, end):
-    response = requests.get(PAGEVIEW_URL.format(title=slugify(title), start=start, end=end))
-    records = response.json()['items']
+    url = PAGEVIEW_URL.format(title=slugify(title), start=start, end=end)
+    response = requests.get(url)
+
+    try:
+        records = response.json()['items']
+    except KeyError:
+        msg = 'Page views requested for {} from {} to {} but not receieved'
+        print(msg.format(title, start, end))
+        logger.debug(msg.format(title, start, end))
+        return pandas.DataFrame()
+
     pageviews = pandas.DataFrame.from_records(records)
     pageviews.insert(0, 'title', title)
     return pageviews

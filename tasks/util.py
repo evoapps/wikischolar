@@ -1,3 +1,5 @@
+import sys
+
 import pywikibot
 import pandas
 import unipath
@@ -30,3 +32,11 @@ def mkdir(dst):
     dst_dir = unipath.Path(dst).parent
     if not dst_dir.exists():
         dst_dir.mkdir(parents=True)
+
+
+def save(frame, output=None):
+    if output:
+        mkdir(output)
+    else:
+        output = sys.stdout
+    frame.to_csv(output, index=False)

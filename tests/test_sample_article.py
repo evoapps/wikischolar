@@ -32,4 +32,9 @@ def test_missing_article(articles):
     missing = pandas.DataFrame({'title': ['not-a-real-article']})
     edits = wikischolar.edits.count_yearly_edits(missing)
     revids = wikischolar.fill.fill_yearly_ids(missing)
-    assert len(edits) == len(revids) == 0
+    views = wikischolar.views.yearly_page_views(missing)
+    assert len(edits) == len(revids) == len(views) == 0
+
+def test_missing_page_views():
+    'Tinie Tempah'
+    assert False
