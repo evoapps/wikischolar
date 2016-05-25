@@ -40,3 +40,17 @@ def save(frame, output=None):
     else:
         output = sys.stdout
     frame.to_csv(output, index=False)
+
+
+def read(argv, is_value, name):
+    """Create a table from a path or a value.
+
+    Args:
+        argv (str): The unknown argument, e.g., from the command line.
+        is_value (bool): Is argv supposed to be a value?
+        name (str): The required column if argv is given as a value.
+    """
+    if is_value:
+        return pandas.DataFrame({name: [argv]})
+    else:
+        return pandas.read_csv(argv)

@@ -5,11 +5,12 @@ import pandas
 
 from . import get, fill, quality, edits, views
 from . import R
-from .util import mkdir, save
+from .util import mkdir, save, read
 
 # DRY docs
 ARTICLES = "Path to existing csv of articles with titles."
-OUTPUT = "Path to new csv to save."
+OUTPUT = "Path to new csv to save. By default output goes to stdout."
+SINGLE = "If specified, input is a single value rather than a path."
 
 
 @task(aliases=['get'],
@@ -22,39 +23,39 @@ def get_table(title, output=None):
 
 @task(aliases=['fill'],
       help=dict(articles=ARTICLES, output=OUTPUT))
-def fill_yearly_ids(articles, output=None):
+def fill_yearly_ids(articles, output=None, single=False):
     """Retrieve the revision ids for each article sampled at year's end."""
-    articles = pandas.read_csv(articles)
+    articles = read(articles, single, 'title')
     revids = fill.fill_yearly_ids(articles)
     save(revids, output)
 
 
 @task(aliases=['quality'],
       help=dict(revisions="Path to an existing csv of revisions with revids.",
-                output=OUTPUT))
-def wp10_qualities(revisions, output=None):
+                output=OUTPUT, single=SINGLE))
+def wp10_qualities(revisions, output=None, single=False):
     """Obtain article quality estimates from the ORES."""
-    unassessed = pandas.read_csv(revisions)
+    unassessed = read(revisions, single, 'revid')
     qualities = quality.wp10_qualities(unassessed)
     save(qualities, output)
 
 
 @task(aliases=['edits'],
-      help=dict(articles=ARTICLES, output=OUTPUT))
-def count_yearly_edits(articles, output=None):
+      help=dict(articles=ARTICLES, output=OUTPUT, single=SINGLE))
+def count_yearly_edits(articles, output=None, single=False):
     """Count edits per year for each article."""
-    articles = pandas.read_csv(articles)
+    articles = read(articles, single, 'title')
     counts = edits.count_yearly_edits(articles)
     save(counts, output)
 
 
 @task(aliases=['views'],
-      help=dict(articles=ARTICLES, output=OUTPUT))
-def yearly_page_views(articles, output=None):
+      help=dict(articles=ARTICLES, output=OUTPUT, single=SINGLE))
+def yearly_page_views(articles, output=None, single=False):
     """Get yearly page view sums for each article."""
-    articles = pandas.read_csv(articles)
+    articles = read(articles, single, 'title')
     totals = views.yearly_page_views(articles)
-    save(total, output)
+    save(totals, output)
 
 
 @task
