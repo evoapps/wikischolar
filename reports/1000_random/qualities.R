@@ -11,7 +11,7 @@ library(AICcmodavg)
 
 ## ---- data
 library(wikischolarlib)
-data(random1000)
+data("random1000")
 
 random1000 <- random1000 %>%
   recode_quadratic

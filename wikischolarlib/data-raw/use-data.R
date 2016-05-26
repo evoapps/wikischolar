@@ -2,13 +2,51 @@ library(devtools)
 library(dplyr)
 library(lubridate)
 library(readr)
+library(magrittr)
 
+source("R/summarizers.R")
+
+
+# Articles
+# ========
 articles <- read_csv("data-raw/articles.csv")
-revisions <- read_csv("data-raw/revisions.csv")
-qualities <- read_csv("data-raw/qualities.csv")
+use_data(articles, overwrite = TRUE)
+articles <- articles %>%
+  select(title)
 
-labeled_revisions <- left_join(revisions, qualities)
-random1000 <- merge(articles, labeled_revisions)
+
+# Qualities
+# =========
+revisions <- read_csv("data-raw/revisions.csv")
+qualities <- read_csv("data-raw/qualities.csv") %>%
+  left_join(revisions)
+use_data(qualities, overwrite = TRUE)
+
+qualities <- qualities %>%
+  mutate(quality = weighted_quality(Stub, Start, C, B, GA, FA)) %>%
+  select(title, timestamp, prediction, quality) %>%
+  arrange(title, timestamp)
+
+
+# Edits
+# =====
+edits <- read_csv("data-raw/edits.csv")
+use_data(edits, overwrite = TRUE)
+edits <- edits %>% select(title, timestamp, edits = revid)
+
+
+# Views
+# =====
+views <- read_csv("data-raw/views.csv")
+use_data(views, overwrite = TRUE)
+
+
+# Merge all data
+# ==============
+random1000 <- articles %>%
+  left_join(qualities) %>%
+  left_join(edits) %>%
+  left_join(views)
 
 # Set order for article classes
 article_classes <- c("Stub", "Start", "C", "B", "GA", "FA")
@@ -22,10 +60,10 @@ random1000 <- random1000 %>%
   ungroup %>%
   mutate(age = year - year0)
 
-# Calculate continuous article quality
-weighted_quality <- function(Stub, Start, C, B, GA, FA) {
-  (Stub * 1) + (Start * 2) + (C * 3) + (B * 4) + (GA * 5) + (FA * 6)
-}
-random1000$quality <- with(random1000, weighted_quality(Stub,Start,C,B,GA,FA))
+
+# Drop weird observations
+random1000 <- random1000 %>%
+  filter(year0 >= 0)
+
 
 use_data(random1000, overwrite = TRUE)
