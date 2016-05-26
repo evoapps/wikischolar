@@ -45,6 +45,9 @@ def save(frame, output=None):
 def read(argv, is_value, name):
     """Create a table from a path or a value.
 
+    >>> df = read('articles.csv', is_value=False, name='title')
+    >>> df = read('Splendid fairywren', is_value=True, name='title')
+
     Args:
         argv (str): The unknown argument, e.g., from the command line.
         is_value (bool): Is argv supposed to be a value?

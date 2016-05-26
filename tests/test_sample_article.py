@@ -36,5 +36,6 @@ def test_missing_article(articles):
     assert len(edits) == len(revids) == len(views) == 0
 
 def test_missing_page_views():
-    'Tinie Tempah'
-    assert False
+    no_page_views = wikischolar.util.read('Tinie Tempah', is_value=True,
+                                          name='title')
+    wikischolar.views.yearly_page_views(no_page_views)

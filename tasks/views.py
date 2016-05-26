@@ -12,7 +12,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Endpoint to wikimedia pageview API
-PAGEVIEW_URL = 'https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/all-agents/{title}/daily/{start}/{end}'
+PAGEVIEW_URL = ('https://wikimedia.org/api/rest_v1/'
+                'metrics/pageviews/per-article/'
+                'en.wikipedia.org/all-access/all-agents/'
+                '{title}/daily/{start}/{end}')
 
 TIMEFORMAT = '%Y%m%d'  # e.g., 20160101
 TODAY = time.strftime(TIMEFORMAT, time.localtime())
@@ -50,7 +53,14 @@ def sample_page_views(article, offset):
     else:
         end = TODAY
 
-    page_views = daily_page_views(title, start, end)
+    try:
+        page_views = daily_page_views(title, start, end)
+    except KeyError:
+        msg = 'Page views requested for {} from {} to {} but not receieved'
+        print(msg.format(title, start, end))
+        logger.debug(msg.format(title, start, end))
+        return pandas.DataFrame()
+
     page_views['timestamp'] = pandas.to_datetime(page_views.timestamp,
                                                  format=TIMEFORMAT+'00')
     page_views.set_index('timestamp', inplace=True)
@@ -63,15 +73,7 @@ def sample_page_views(article, offset):
 def daily_page_views(title, start, end):
     url = PAGEVIEW_URL.format(title=slugify(title), start=start, end=end)
     response = requests.get(url)
-
-    try:
-        records = response.json()['items']
-    except KeyError:
-        msg = 'Page views requested for {} from {} to {} but not receieved'
-        print(msg.format(title, start, end))
-        logger.debug(msg.format(title, start, end))
-        return pandas.DataFrame()
-
+    records = response.json()['items']
     pageviews = pandas.DataFrame.from_records(records)
     pageviews.insert(0, 'title', title)
     return pageviews
