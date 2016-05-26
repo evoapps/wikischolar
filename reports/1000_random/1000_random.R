@@ -14,7 +14,10 @@ library(wikischolarlib)
 data("random1000")
 
 random1000 <- random1000 %>%
-  recode_quadratic
+  recode_quadratic %>%
+  group_by(title) %>%
+  mutate(quality_diff = c(NA, diff(quality))) %>%
+  ungroup
 
 ## ---- theme
 base_plot <- ggplot(random1000) +
@@ -40,6 +43,7 @@ scale_x_age <- scale_x_continuous("article age", breaks = seq(0, max_age, by = 2
 
 # quality
 scale_y_quality <- scale_y_continuous("article quality", breaks = 0:6)
+scale_y_quality_diff <- scale_y_continuous(expression(paste(Delta, " quality")), breaks = 0:6)
 
 quality_coords <- coord_cartesian(ylim = c(1, 6))
 
@@ -98,3 +102,17 @@ age <- base_plot +
   quality_coords
 
 grid.arrange(date, age, nrow = 1)
+
+## ---- predictors
+edits <- base_plot +
+  geom_point(aes(x = edits, y = quality_diff),
+             color = colors[["blue"]], shape = 1) +
+  scale_x_continuous("raw edits") +
+  scale_y_quality_diff
+
+views <- base_plot +
+  geom_point(aes(x = views, y = quality_diff),
+             color = colors[["green"]], shape = 1) +
+  scale_y_quality_diff
+
+grid.arrange(views, edits, nrow = 1)

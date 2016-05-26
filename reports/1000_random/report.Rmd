@@ -12,6 +12,7 @@ library(knitr)
 opts_chunk$set(
   echo = FALSE,
   message = FALSE,
+  warning = FALSE,
   fig.path = "figs/",
   cache.path = "cache/"
 )
@@ -49,16 +50,16 @@ Article quality was estimated using a machine learning algorithm trained to dete
 
 # Results
 
-```{r, date-mod, results = "hide"}
+## Quality
+
+```{r, date-mod, cache = TRUE, results = "hide"}
 ```
 
-```{r, age-mod, results = "hide"}
+```{r, age-mod, cache = TRUE, results = "hide"}
 ```
 
 ```{r, quality, fig.width = 10}
 ```
-
-## Models
 
 The `date_mod` predicts article quality from the date at which the article was sampled, independent of the article's age.
 
@@ -68,6 +69,11 @@ The `date_mod` predicts article quality from the date at which the article was s
 The `age_mod` predicts article quality from the age of the article, independent of the date at which the article was sampled.
 
 ```{r, age-mod, echo = 1}
+```
+
+## Predictors
+
+```{r, predictors, fig.width = 10}
 ```
 
 # Discussion
