@@ -1,7 +1,7 @@
 # reproducible
 data/
 *.html
-*-figs/
+*figs/
 
 # python
 __pycache__/

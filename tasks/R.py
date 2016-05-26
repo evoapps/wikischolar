@@ -26,7 +26,9 @@ def install():
 def reports():
     """Compile knitr reports."""
     proj_root = unipath.Path(__file__).absolute().ancestor(2)
+    reports = unipath.Path(proj_root, 'reports')
+
     cmd = 'rmarkdown::render("{}")'
-    for rmd in proj_root.walk('*.Rmd'):
+    for rmd in reports.walk(filter=lambda x: unipath.Path(x).ext == '.Rmd'):
         rmd_cmd = cmd.format(rmd)
         run("Rscript -e '{}'".format(rmd_cmd))

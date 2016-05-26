@@ -12,11 +12,11 @@ library(knitr)
 opts_chunk$set(
   echo = FALSE,
   message = FALSE,
-  fig.path = "qualities-figs/",
-  cache.path = "qualities-cache/"
+  fig.path = "figs/",
+  cache.path = "cache/"
 )
 
-read_chunk("qualities.R")
+read_chunk("1000_random.R")
 ```
 
 ```{r, setup}
