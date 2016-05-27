@@ -8,8 +8,8 @@ from . import R
 from .util import mkdir, save, read
 
 # DRY docs
-ARTICLES = "Path to existing csv of articles with titles."
-OUTPUT = "Path to new csv to save. By default output goes to stdout."
+ARTICLES = "Article title or path to csv of articles with titles."
+OUTPUT = "Optional path to new csv to save. By default output goes to stdout."
 SINGLE = "If specified, input is a single value rather than a path."
 
 
