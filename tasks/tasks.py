@@ -3,7 +3,7 @@ import sys
 from invoke import task, run, Collection
 import pandas
 
-from . import get, fill, quality, edits, views
+from . import get, fill, quality, edits, views, generations
 from . import R
 from .util import mkdir, save, read
 
@@ -49,6 +49,15 @@ def count_yearly_edits(articles, output=None, single=False):
     save(counts, output)
 
 
+@task(aliases=['generations'],
+      help=dict(articles=ARTICLES, output=OUTPUT, single=SINGLE))
+def count_yearly_generations(articles, output=None, single=False):
+    """Fold revisions into an evolutionary tree and count the generations."""
+    articles = read(articles, single, 'title')
+    generations = generations.count_yearly_generations(articles)
+    save(generations, output)
+
+
 @task(aliases=['views'],
       help=dict(articles=ARTICLES, output=OUTPUT, single=SINGLE))
 def yearly_page_views(articles, output=None, single=False):
@@ -85,5 +94,6 @@ namespace = Collection(
     fill_yearly_ids,
     wp10_qualities,
     count_yearly_edits,
+    count_yearly_generations,
     yearly_page_views,
 )
