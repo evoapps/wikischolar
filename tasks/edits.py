@@ -6,7 +6,7 @@ from invoke import task
 import pandas
 import pywikibot
 
-from .util import get_revisions
+from .revisions import get_revisions
 
 MAX_WORKERS = 4
 

@@ -4,9 +4,12 @@ from invoke import task, run, Collection
 import pandas
 import unipath
 
-from . import get, fill, quality, edits, views, generations
+from . import revisions, get, fill, quality, edits, views, generations
 from . import R
 from .util import mkdir, save, read
+
+DB_NAME = 'wikischolar.sqlite'
+
 
 # DRY docs
 ARTICLES = "Article title or path to csv of articles with titles."
@@ -14,17 +17,35 @@ OUTPUT = "Optional path to new csv to save. By default output goes to stdout."
 SINGLE = "If specified, input is a single value rather than a path."
 
 
-@task(aliases=['save'],
-      help={'output': 'Name of sqlite file to save to.',
-            'force': 'Should any existing data be removed? Default is False.'})
-def save_all_revisions(articles, output='revisions.sqlite', single=False,
-                       force=False):
-    """Retrieve all revisions from a list of titles."""
-    output = unipath.Path(output)
-    if force and output.exists():
+@task(help=dict(articles=ARTICLES,
+                output=('Name of sqlite file to save to.'
+                        'Defaults to {}').format(DB_NAME),
+                single=SINGLE,
+                purge='Should any existing data be removed? Default is False.'))
+def revisions(articles, output=None, single=False, purge=False):
+    """Retrieve all revisions from a list of titles.
+
+    Download the revisions for a list of articles like this::
+
+        $ inv revisions data/articles.csv -o data/wikischolar.sqlite
+
+    The articles.csv input is expected to have a column named title. Instead
+    of getting the revisions for a list of articles, revisions for individual
+    articles can be obtained as well using the ``single`` flag::
+
+        $ inv revisions -s "Splendid fairywren" -o data/wikischolar.sqlite
+
+    By default, the new revisions are appended to an existing database. If
+    the ``--purge`` flag is provided, the output database is removed if it
+    exists, and the results are stored in a fresh database and table::
+
+        $ inv revisions data/articles.csv -p -o data/wikischolar.sqlite
+    """
+    output = unipath.Path(output or DB_NAME)
+    if purge and output.exists():
         output.remove()
     articles = read(articles, single, 'title')
-    get.save_all_revisions(articles, db_name=output)
+    revisions.save_all_revisions(articles, db_name=output)
 
 
 @task(aliases=['get'],
@@ -110,5 +131,5 @@ namespace = Collection(
     count_yearly_edits,
     count_yearly_generations,
     yearly_page_views,
-    save_all_revisions,
+    revisions,
 )

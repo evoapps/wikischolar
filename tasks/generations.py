@@ -3,7 +3,7 @@ import functools
 import pandas
 import pywikibot
 
-from .util import get_revisions
+from .revisions import get_revisions
 
 def count_yearly_generations(articles):
     """Count the generations of edits excluding reversions.

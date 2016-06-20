@@ -1,6 +1,7 @@
 """Test wikischolar commands for a sample article.
 
 Warning! These tests are run live against the Wikipedia servers.
+TODO: Swap out real requests with betamaxx
 """
 import pytest
 import pandas
@@ -17,7 +18,7 @@ def revisions():
     return pandas.DataFrame({'revid': [691949610]})
 
 def test_getting_revisions():
-    revisions = wikischolar.util.get_revisions('Splendid fairywren')
+    revisions = wikischolar.revisions.get_revisions('Splendid fairywren')
     assert 'title' in revisions
 
 def test_yearly_ids(articles):

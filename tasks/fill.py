@@ -6,7 +6,7 @@ from invoke import task
 import pywikibot
 import pandas
 
-from .util import get_revisions
+from .revisions import get_revisions
 
 MAX_WORKERS = 4
 CURRENT_YEAR = time.localtime().tm_year
