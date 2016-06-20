@@ -9,7 +9,6 @@ import requests
 from .util import get_page
 
 import logging
-logger = logging.getLogger(__name__)
 
 # Endpoint to wikimedia pageview API
 PAGEVIEW_URL = ('https://wikimedia.org/api/rest_v1/'
@@ -48,7 +47,7 @@ def sample_page_views(article, offset):
     except pywikibot.NoPage:
         msg = 'Page views requested for {} but no page was found'
         print(msg.format(title))
-        logger.debug(msg.format(title))
+        logging.debug(msg.format(title))
         return pandas.DataFrame()
     else:
         end = TODAY
@@ -57,7 +56,7 @@ def sample_page_views(article, offset):
         page_views = daily_page_views(title, start, end)
     except KeyError:
         msg = 'Page views requested for {} from {} to {} but not receieved'
-        logger.debug(msg.format(title, start, end))
+        logging.debug(msg.format(title, start, end))
         return pandas.DataFrame()
 
     page_views['timestamp'] = pandas.to_datetime(page_views.timestamp,

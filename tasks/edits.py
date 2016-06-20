@@ -1,13 +1,10 @@
 from concurrent import futures
 import functools
+import logging
 
 from invoke import task
-
 import pandas
 import pywikibot
-
-import logging
-logger = logging.getLogger(__name__)
 
 from .util import get_revisions
 
@@ -47,7 +44,7 @@ def count_edits(article, offset):
         revisions = get_revisions(title)
     except pywikibot.NoPage:
         msg = 'counting edits: revisions for page {} not found'
-        logger.debug(msg)
+        logging.debug(msg)
         return pandas.DataFrame()
 
     revisions.set_index('timestamp', inplace=True)

@@ -27,7 +27,7 @@ def count_generations(article, offset):
         revisions = get_revisions(title, content=True)
     except pywikibot.NoPage:
         msg = 'counting generations: revisions for page {} not found'
-        logger.debug(msg)
+        logging.debug(msg)
         return pandas.DataFrame()
 
     # Sort revisions by ascending timestamp

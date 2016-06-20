@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 from .tasks import namespace
 
-import logging
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+DB_NAME = 'wikischolar.sqlite'

@@ -8,9 +8,6 @@ import unipath
 
 from .util import get_revisions
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
 
 def save_all_revisions(articles, db_name):
     """Retrieve revisions for all titles and save to the db."""
@@ -40,14 +37,14 @@ def cache_revisions(title, db, table='revisions'):
         revisions = get_revisions(title, content=True)
     except pywikibot.NoPage:
         msg = 'Page views requested for {} but no page was found'
-        # logger.debug(msg.format(title))
+        # logging.debug(msg.format(title))
         print(msg, title)
 
     try:
         revisions.to_sql(table, db, if_exists='append', index=False)
     except AttributeError as e:
         msg = 'Error saving revisions for {} to db: {}'
-        # logger.debug(msg.format(title, e))
+        # logging.debug(msg.format(title, e))
         print(msg.format(title, e))
 
 
