@@ -28,6 +28,7 @@ def get_revisions(title, content=False):
     # hack to turn pywikibot Revisions into records for pandas
     revision_list = [revision.__dict__ for revision in revision_gen]
     revisions = pandas.DataFrame.from_records(revision_list)
+    revisions.insert(0, 'title', title)
     return revisions
 
 

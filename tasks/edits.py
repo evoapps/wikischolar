@@ -54,5 +54,4 @@ def count_edits(article, offset):
     edits = revisions.resample(offset).count()
 
     edits.reset_index(inplace=True)
-    edits.insert(0, 'title', title)
     return edits

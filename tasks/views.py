@@ -65,7 +65,6 @@ def sample_page_views(article, offset):
     page_views.set_index('timestamp', inplace=True)
     sums = page_views.resample(offset).sum()
     sums.reset_index(inplace=True)
-    sums.insert(0, 'title', title)
     return sums
 
 

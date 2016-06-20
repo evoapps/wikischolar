@@ -16,6 +16,10 @@ def articles():
 def revisions():
     return pandas.DataFrame({'revid': [691949610]})
 
+def test_getting_revisions():
+    revisions = wikischolar.util.get_revisions('Splendid fairywren')
+    assert 'title' in revisions
+
 def test_yearly_ids(articles):
     revids = wikischolar.fill.fill_yearly_ids(articles)
     assert len(revids) > 0

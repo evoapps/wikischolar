@@ -49,5 +49,4 @@ def sample_revisions(article, offset):
     sample = sample.ix[:last_valid_edit_date]
 
     sample.reset_index(inplace=True)
-    sample.insert(0, 'title', title)
     return sample

@@ -40,6 +40,5 @@ def count_generations(article, offset):
 
     # Format output
     generations.reset_index(inplace=True)
-    generations.insert(0, 'title', title)
 
     return generations
