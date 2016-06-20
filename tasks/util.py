@@ -18,8 +18,8 @@ def get_revisions(title, content=False):
 
     Args:
         title (str): Name of the Wikipedia article.
-        content (bool): Whether the content of the revision should be retrieved
-            or just the metadata. Defaults to False, which is just metadata.
+        content (bool): Should the article text content of the revision be
+            retrieved? Default is to retrieve just metadata.
     Returns:
         A pandas.DataFrame of revisions.
     """

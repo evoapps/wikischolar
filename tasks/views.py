@@ -57,7 +57,6 @@ def sample_page_views(article, offset):
         page_views = daily_page_views(title, start, end)
     except KeyError:
         msg = 'Page views requested for {} from {} to {} but not receieved'
-        print(msg.format(title, start, end))
         logger.debug(msg.format(title, start, end))
         return pandas.DataFrame()
 

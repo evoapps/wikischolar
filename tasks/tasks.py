@@ -2,6 +2,7 @@ import sys
 
 from invoke import task, run, Collection
 import pandas
+import unipath
 
 from . import get, fill, quality, edits, views, generations
 from . import R
@@ -11,6 +12,19 @@ from .util import mkdir, save, read
 ARTICLES = "Article title or path to csv of articles with titles."
 OUTPUT = "Optional path to new csv to save. By default output goes to stdout."
 SINGLE = "If specified, input is a single value rather than a path."
+
+
+@task(aliases=['save'],
+      help={'output': 'Name of sqlite file to save to.',
+            'force': 'Should any existing data be removed? Default is False.'})
+def save_all_revisions(articles, output='revisions.sqlite', single=False,
+                       force=False):
+    """Retrieve all revisions from a list of titles."""
+    output = unipath.Path(output)
+    if force and output.exists():
+        output.remove()
+    articles = read(articles, single, 'title')
+    get.save_all_revisions(articles, db_name=output)
 
 
 @task(aliases=['get'],
@@ -96,4 +110,5 @@ namespace = Collection(
     count_yearly_edits,
     count_yearly_generations,
     yearly_page_views,
+    save_all_revisions,
 )
