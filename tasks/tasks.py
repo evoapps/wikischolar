@@ -54,8 +54,8 @@ def count_yearly_edits(articles, output=None, single=False):
 def count_yearly_generations(articles, output=None, single=False):
     """Fold revisions into an evolutionary tree and count the generations."""
     articles = read(articles, single, 'title')
-    generations = generations.count_yearly_generations(articles)
-    save(generations, output)
+    counts = generations.count_yearly_generations(articles)
+    save(counts, output)
 
 
 @task(aliases=['views'],

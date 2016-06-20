@@ -30,4 +30,16 @@ def count_generations(article, offset):
         logger.debug(msg)
         return pandas.DataFrame()
 
-    return revisions
+    # Sort revisions by ascending timestamp
+    revisions.set_index('timestamp', inplace=True)
+    revisions.sort_index(ascending=True, inplace=True)
+
+    # Count generations (unique revisions)
+    generations = revisions.drop_duplicates(subset=['text'], keep='first')
+    generations = generations.resample(offset).count()
+
+    # Format output
+    generations.reset_index(inplace=True)
+    generations.insert(0, 'title', title)
+
+    return generations
