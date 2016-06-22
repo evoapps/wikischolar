@@ -1,5 +1,9 @@
 #!/usr/bin/env python
+import sys
 import logging
-logging.basicConfig(level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
 
 from .tasks import namespace

@@ -1,31 +1,29 @@
+import logging
+import sqlite3
 
 import pywikibot
 import pandas
 
 from .util import get_page
 
+logger = logging.getLogger(__name__)
+
 DB_TABLE = 'revisions'
 
 
-def save_all_revisions(articles, db_name):
+def save_all_revisions(titles, db):
     """Retrieve revisions for all titles and save to the db."""
     # NB: Not trying this multithreaded because I doubt pandas+sqlite
     #     can handle simultaneous writes.
-    db = sqlite3.connect(db_name)
-    try:
-        for title in articles.title:
-            save_revisions(title, db)
-    finally:
-        db.close()
+    for title in titles:
+        save_revisions(title, db)
 
 
-def checkout_revisions(db_name, sql_select='*', sql_from='revisions'):
-    db = sqlite3.connect(db_name)
-    sql_query = 'SELECT {} from {};'.format(sql_select, sql_from)
-    try:
-        revisions = pandas.read_sql_query(sql_query, db)
-    finally:
-        db.close()
+def checkout_all_revisions(db):
+    sql_query = 'SELECT * FROM {}'.format(DB_TABLE)
+    revisions = pandas.read_sql_query(sql_query, db)
+    # sqlite doesn't have a timestamp format
+    revisions['timestamp'] = pandas.to_datetime(revisions.timestamp)
     return revisions
 
 
@@ -37,14 +35,14 @@ def save_revisions(title, db, table=None):
         revisions = get_revisions(title, content=True)
     except pywikibot.NoPage:
         msg = 'Revisions requested for {} but no page was found'
-        logging.error(msg.format(title))
+        logger.debug(msg.format(title))
         revisions = None
 
     try:
         revisions.to_sql(table, db, if_exists='append', index=False)
     except AttributeError as e:
         msg = 'Error saving revisions for {} to db: {}'
-        logging.error(msg.format(title, e))
+        logger.debug(msg.format(title, e))
 
     return revisions
 

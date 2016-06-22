@@ -21,6 +21,37 @@ command line::
     (wikischolar) wikischolar/$ inv --list      # List available commands
     (wikischolar) wikischolar/$ inv -h quality  # Get help on quality command
 
+Basic usage
+-----------
+
+To use wikischolar, you create a local library to analyze::
+
+    $ inv revisions "Splendid fairywren"
+    $ inv revisions data/articles.csv
+
+This creates a sqlite database called "wikischolar.sqlite" in the current
+directory with a table called "revisions" containing all revisions to
+the articles.
+
+    $ ls | grep *.sqlite
+    # wikischolar.sqlite
+
+To specify a custom database location, add the ``--database`` option::
+
+    $ inv revisions data/articles.csv -d data/wikischolar.sqlite
+
+Now you can compute metrics on the particular revisions being studied. For
+example, you can calculate the number of edits per year. These results
+are saved in a new table in the database called "edits".
+
+    $ inv edits    # assumes wikischolar.sqlite exists in cwd
+    $ inv edits -d data/wikischolar.sqlite
+
+You can also obtain the page views for the articles as well::
+
+    $ inv views
+
+
 1000 random articles
 --------------------
 
