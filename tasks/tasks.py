@@ -9,8 +9,10 @@ import unipath
 
 import tasks as wikischolar
 
-from .revisions import save_all_revisions, checkout_all_revisions
+from .revisions import (save_all_revisions, checkout_all_revisions,
+                        resample_revisions)
 from .edits import count_yearly_edits
+from .quality import wp10_qualities
 from .util import read
 
 DB_NAME = 'wikischolar.sqlite'
@@ -99,6 +101,22 @@ def edits(database=None):
         db.close()
 
 
+@task
+def qualities(database=None, resample_offset='YearEnd'):
+    """Filter a subset of revisions and save the results in a new table."""
+    db_loc = unipath.Path(database or DB_NAME)
+    assert db_loc.exists(), MISSING_DB_MSG.format(db_loc)
+    offset = getattr(pandas.tseries.offsets, resample_offset)()
+
+    db = sqlite3.connect(db_loc)
+    try:
+        sample = resample_revisions(db, offset)
+        qualities = wp10_qualities(sample)
+        qualities.to_sql('qualities', db, if_exists='append', index=False)
+    finally:
+        db.close()
+
+
 # @task(aliases=['get'],
 #       help=dict(title="The title of the wiki page", output=OUTPUT))
 # def get_table(title, output=None):
@@ -165,4 +183,5 @@ namespace = Collection(
     revisions,
     edits,
     query,
+    qualities,
 )

@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+import time
 
 import pywikibot
 import pandas
@@ -9,6 +10,7 @@ from .util import get_page
 logger = logging.getLogger(__name__)
 
 DB_TABLE = 'revisions'
+CURRENT_YEAR = time.localtime().tm_year
 
 
 def save_all_revisions(titles, db):
@@ -25,6 +27,25 @@ def checkout_all_revisions(db):
     # sqlite doesn't have a timestamp format
     revisions['timestamp'] = pandas.to_datetime(revisions.timestamp)
     return revisions
+
+
+def resample_revisions(db, offset):
+    revisions = checkout_all_revisions(db)
+    revids = (revisions.set_index('timestamp')
+                       .groupby('title')
+                       ['revid']
+                       .resample(offset)
+                       .last())
+
+    # Fill missing revids for years w/o edits with the previous year's revid
+    revids = revids.fillna(method='bfill').astype(int)
+    sample = revids.reset_index()
+
+    # Drop this year's edits
+    last_valid_edit_date = '{}-01-01'.format(CURRENT_YEAR)
+    sample = sample.ix[sample.timestamp < last_valid_edit_date]
+    return sample
+
 
 
 def save_revisions(title, db, table=None):

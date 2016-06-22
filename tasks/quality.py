@@ -36,9 +36,9 @@ def get_qualities(articles_group, endpoint, score_formatter):
     _, articles = articles_group
     revids = articles.revid.unique()
 
-    error_msg = 'requesting {} scores when {} is max'.format(
-        len(revids), MAX_ORES_REVIDS)
-    assert len(revids) <= MAX_ORES_REVIDS, error_msg
+    error_msg = 'requesting {} scores when {} is max'
+    assert len(revids) <= MAX_ORES_REVIDS,\
+        error_msg.format(len(revids), MAX_ORES_REVIDS)
 
     revids_str = '|'.join(map(str, revids))
     response = requests.get(endpoint, params=dict(revids=revids_str))
