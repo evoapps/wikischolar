@@ -14,6 +14,8 @@ from .edits import count_yearly_edits
 from .util import read
 
 DB_NAME = 'wikischolar.sqlite'
+MISSING_DB_MSG = 'no database at {}'
+
 
 @task
 def query(sql, database=None, output=None):
@@ -21,7 +23,7 @@ def query(sql, database=None, output=None):
     db_loc = unipath.Path(database or DB_NAME)
     output = output or sys.stdout
 
-    assert db_loc.exists(), 'no database at {}'.format(db_loc)    
+    assert db_loc.exists(), MISSING_DB_MSG.format(db_loc)
 
     db = sqlite3.connect(db_loc)
     try:
@@ -64,14 +66,13 @@ def revisions(articles, database=None, purge=False, split_char='|',
 
         $ inv revisions data/articles.csv --purge -d data/wikischolar.sqlite
     """
-    articles_csv = unipath.Path(articles)
     db_loc = unipath.Path(database or DB_NAME)
 
     if unipath.Path(articles).exists():
         articles = pandas.read_csv(articles)  # might fail
         titles = articles[title_col].tolist() # might fail
     else:
-        titles = articles.split(split_char)
+        titles = articles.split(split_char)   # should always produce list
 
     if purge and db_loc.exists():
         db_loc.remove()
@@ -86,14 +87,16 @@ def revisions(articles, database=None, purge=False, split_char='|',
 @task
 def edits(database=None):
     """Tally the number of yearly edits from a list of articles."""
-    db = sqlite3.connect(database or DB_NAME)
+    db_loc = unipath.Path(database or DB_NAME)
+    assert db_loc.exists(), MISSING_DB_MSG.format(db_loc)
+
+    db = sqlite3.connect(db_loc)
     try:
         all_revisions = checkout_all_revisions(db)
+        counts = count_yearly_edits(all_revisions)
+        counts.to_sql('edits', db, if_exists='append', index=False)
     finally:
         db.close()
-
-    counts = count_yearly_edits(all_revisions)
-    counts.to_sql('edits', db, if_exists='append', index=False)
 
 
 # @task(aliases=['get'],
