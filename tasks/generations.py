@@ -13,6 +13,10 @@ def count_yearly_generations(revisions):
         article's existence.
     """
     offset = pandas.tseries.offsets.YearEnd()
+    generations = (revisions.set_index('timestamp')
+                            .groupby('title')
+                            .resample(offset)
+                            .apply(count_generations))
 
     assert False, 'TODO'
 
@@ -22,24 +26,6 @@ def count_yearly_generations(revisions):
     return pandas.concat(results)
 
 
-def count_generations(article, offset):
-    title = article.title
-    try:
-        revisions = get_revisions(title, content=True)
-    except pywikibot.NoPage:
-        msg = 'counting generations: revisions for page {} not found'
-        logging.debug(msg)
-        return pandas.DataFrame()
-
-    # Sort revisions by ascending timestamp
-    revisions.set_index('timestamp', inplace=True)
-    revisions.sort_index(ascending=True, inplace=True)
-
-    # Count generations (unique revisions)
-    generations = revisions.drop_duplicates(subset=['text'], keep='first')
-    generations = generations.resample(offset).count()
-
-    # Format output
-    generations.reset_index(inplace=True)
-
-    return generations
+def count_generations(revisions):
+    revisions['generations'] = 1
+    return revisions

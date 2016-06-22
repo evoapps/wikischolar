@@ -7,12 +7,11 @@ from invoke import task, run, Collection
 import pandas
 import unipath
 
-import tasks as wikischolar
-
 from .revisions import (save_all_revisions, checkout_all_revisions,
                         resample_revisions)
 from .edits import count_yearly_edits
 from .quality import wp10_qualities
+from .generations import count_yearly_generations
 from .util import read
 
 DB_NAME = 'wikischolar.sqlite'
@@ -118,6 +117,12 @@ def qualities(database=None, resample_offset='YearEnd'):
         db.close()
 
 
+@task
+def generations(database=None):
+    pass
+
+
+
 # @task(aliases=['get'],
 #       help=dict(title="The title of the wiki page", output=OUTPUT))
 # def get_table(title, output=None):
@@ -185,4 +190,5 @@ namespace = Collection(
     edits,
     query,
     qualities,
+    generations,
 )
