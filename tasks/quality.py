@@ -29,7 +29,10 @@ def wp10_qualities(revisions):
     workers = min(MAX_ORES_THREADS, len(chunks))
     with futures.ThreadPoolExecutor(workers) as executor:
         results = executor.map(get_wp10, chunks)
-    return pandas.concat(results)
+
+    qualities_by_revid = pandas.concat(results)
+    labeled_qualities = pandas.merge(revisions, qualities_by_revid)
+    return labeled_qualities
 
 
 def get_qualities(articles_group, endpoint, score_formatter):

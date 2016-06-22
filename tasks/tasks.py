@@ -111,6 +111,7 @@ def qualities(database=None, resample_offset='YearEnd'):
     db = sqlite3.connect(db_loc)
     try:
         sample = resample_revisions(db, offset)
+        sample = sample[['title', 'timestamp', 'revid']]
         qualities = wp10_qualities(sample)
         qualities.to_sql('qualities', db, if_exists='append', index=False)
     finally:
