@@ -6,19 +6,15 @@ import pandas
 import pypandoc
 import unipath
 
+from .util import get_page
+
 
 def get_table(title):
     """Retrieve a table of articles from a wiki page."""
-    wiki_text = get_page_text(title)
+    wiki_text = get_page(title).get()
     table = convert_wiki_to_table(wiki_text)
     data = tidy_wiki_table(table)
     return data
-
-
-def get_page_text(title):
-    site = pywikibot.Site('en', 'wikipedia')
-    page = pywikibot.Page(site, title)
-    return page.get()
 
 
 def convert_wiki_to_table(wiki_text):

@@ -3,18 +3,19 @@ import functools
 import pandas
 import pywikibot
 
-from .revisions import get_revisions
-
-def count_yearly_generations(articles):
+def count_yearly_generations(revisions):
     """Count the generations of edits excluding reversions.
 
     Args:
-        articles (pandas.DataFrame): A table of articles with titles.
+        revisions (pandas.DataFrame): A table of revisions.
     Returns:
         A pandas.DataFrame of generations of edits for each year of an
         article's existence.
     """
     offset = pandas.tseries.offsets.YearEnd()
+
+    assert False, 'TODO'
+
     count_generations_yearly = functools.partial(count_generations,
                                                  offset=offset)
     results = map(count_generations_yearly, articles.itertuples())

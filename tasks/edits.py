@@ -5,7 +5,7 @@ def count_yearly_edits(revisions):
     """Get the yearly edit counts for each article in a table.
 
     Args:
-        revisions (pandas.DataFrame): A table of articles with titles.
+        revisions (pandas.DataFrame): A table of revisions.
     Returns:
         A pandas.DataFrame of edit counts for each year of each article's
         existence.
