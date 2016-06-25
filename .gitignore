@@ -6,6 +6,7 @@ data/
 
 # python
 __pycache__/
+*.egg-info/
 
 # tests
 .cache/

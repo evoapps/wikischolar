@@ -3,7 +3,7 @@ wikischolar
 
 This research project provides tools for looking up historical article quality
 data for Wikipedia articles using the Wikimedia Foundations Objective Revision
-Evalutation Service (ORES)
+Evaluation Service (ORES)
 <https://meta.wikimedia.org/wiki/Objective_Revision_Evaluation_Service>.
 
 To install and use the wikischolar tool, clone the repo and install the
@@ -25,9 +25,8 @@ Basic usage
 -----------
 
 To use wikischolar, you create a local library to analyze::
-
-    $ inv revisions "Splendid fairywren"
-    $ inv revisions data/articles.csv
+    
+    $ inv load data/articles.csv
 
 This creates a sqlite database called "wikischolar.sqlite" in the current
 directory with a table called "revisions" containing all revisions to
@@ -50,7 +49,10 @@ are saved in a new table in the database called "edits".
 You can also obtain the page views for the articles as well::
 
     $ inv views
+ 
+If multiple invoke commands are chained they will be run in order::
 
+    $ inv load data/articles.csv revisions edits views qualities generations
 
 1000 random articles
 --------------------

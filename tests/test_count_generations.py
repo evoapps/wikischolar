@@ -8,9 +8,11 @@ import tasks as wikischolar
 
 def test_count_single_generation():
     revisions = pandas.DataFrame({
-        'timestamp': ['2015-01-01'],
-        'content': ['hello!'],
+        'text': ['aaa', 'bbb', 'aaa', 'ccc'],
+        'revid': [1, 2, 3, 4],
+        'timestamp': pandas.date_range('2000-01-01', '2000-01-04', freq='D'),
+        'title': 'Reverted Article',
     })
     counts = wikischolar.generations.count_generations(revisions)
-    assert len(counts) == 1
-    assert counts.generations.iloc[0] == 1
+    assert len(counts) == 2
+    assert all(counts.text == ['aaa', 'ccc'])
