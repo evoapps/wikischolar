@@ -16,7 +16,7 @@ VIEWS_TABLE = 'views'
 
 
 @task
-def load(articles, database=None, table=None, title_col='title',
+def load(ctx, articles, database=None, table=None, title_col='title',
          split_char='|'):
     """Populate a new wikischolar database with articles to study.
 
@@ -78,7 +78,7 @@ def load(articles, database=None, table=None, title_col='title',
 
 
 @task
-def dump(table, database=None, output=None):
+def dump(ctx, table, database=None, output=None):
     """Dump a table of the (local) wikischolar database."""
     sql_query = 'SELECT * FROM {};'
     output = output or sys.stdout
@@ -92,7 +92,7 @@ def dump(table, database=None, output=None):
 
 
 @task
-def revisions(database=None, articles_table=None):
+def revisions(ctx, database=None, articles_table=None):
     """Get all versions of articles and save them in a local db."""
     titles_query = 'SELECT DISTINCT title FROM {};'
     articles_table = articles_table or ARTICLES_TABLE
@@ -105,7 +105,7 @@ def revisions(database=None, articles_table=None):
 
 
 @task
-def edits(database=None):
+def edits(ctx, database=None):
     """Tally the number of yearly edits from a list of articles."""
     db = wikischolar.db.connect(database)
     try:
@@ -117,7 +117,7 @@ def edits(database=None):
 
 
 @task
-def qualities(database=None, resample_offset='YearEnd'):
+def qualities(ctx, database=None, resample_offset='YearEnd'):
     """Filter a subset of revisions and save the results in a new table."""
     offset = getattr(pandas.tseries.offsets, resample_offset)()
     db = wikischolar.db.connect(database)
@@ -131,7 +131,7 @@ def qualities(database=None, resample_offset='YearEnd'):
 
 
 @task
-def generations(database=None):
+def generations(ctx, database=None):
     """Count the number of generations (edits excluding reversions)."""
     db = wikischolar.db.connect(database)
     try:

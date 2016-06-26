@@ -3,7 +3,7 @@ import sqlite3
 import pytest
 import pandas
 
-import tasks as wikischolar
+import wikischolar
 
 
 def test_count_single_generation():
@@ -14,5 +14,4 @@ def test_count_single_generation():
         'title': 'Reverted Article',
     })
     counts = wikischolar.generations.count_generations(revisions)
-    assert len(counts) == 2
-    assert all(counts.text == ['aaa', 'ccc'])
+    assert counts.generations.iloc[0] == 2

@@ -6,7 +6,7 @@ TODO: Swap out real requests with betamaxx
 import pytest
 import pandas
 
-import tasks as wikischolar
+import wikischolar
 
 
 @pytest.fixture

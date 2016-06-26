@@ -3,7 +3,7 @@ import sqlite3
 import pytest
 import pandas
 
-import tasks as wikischolar
+import wikischolar
 
 
 @pytest.fixture

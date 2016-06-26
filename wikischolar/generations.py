@@ -27,6 +27,7 @@ def count_generations(revisions):
     # assume revisions are ordered in increasing time
     revisions.set_index(revisions.text.apply(checksum), inplace=True)
     parsed = reverts.detect(revisions.iterrows())
+
     rev_map = pandas.Series(index=revisions.revid, name='is_extinct')
     for (rev, rev_eds, rev_to) in parsed:
         # drop reversion and edits that were reverted
@@ -44,4 +45,4 @@ def count_generations(revisions):
 
 
 def checksum(text):
-    return hashlib.sha1(text.encode('utf-8')).digest()
+    return hashlib.sha1(text.encode('utf-8')).hexdigest()
