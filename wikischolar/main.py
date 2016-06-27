@@ -1,4 +1,4 @@
-from invoke import Program, Collection
+from invoke import Program
 from wikischolar.tasks import namespace
 
-program = Program(namespace=namespace, version='0.1.0')
+program = Program(version='0.1.0', namespace=namespace)
