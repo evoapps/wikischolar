@@ -6,21 +6,21 @@ library(magrittr)
 
 source("R/summarizers.R")
 
+OVERWRITE <- TRUE
+
 
 # Articles
 # ========
-articles <- read_csv("data-raw/articles.csv")
-use_data(articles, overwrite = TRUE)
+articles <- read_csv("data-raw/articles.csv") %>% select(-1)  # drop index col
+use_data(articles, overwrite = OVERWRITE)
 articles <- articles %>%
   select(title)
 
 
 # Qualities
 # =========
-revisions <- read_csv("data-raw/revisions.csv")
-qualities <- read_csv("data-raw/qualities.csv") %>%
-  left_join(revisions)
-use_data(qualities, overwrite = TRUE)
+qualities <- read_csv("data-raw/qualities.csv") %>% select(-1)  # drop index col
+use_data(qualities, overwrite = OVERWRITE)
 
 qualities <- qualities %>%
   mutate(quality = weighted_quality(Stub, Start, C, B, GA, FA)) %>%
@@ -30,15 +30,13 @@ qualities <- qualities %>%
 
 # Edits
 # =====
-edits <- read_csv("data-raw/edits.csv")
-use_data(edits, overwrite = TRUE)
-edits <- edits %>% select(title, timestamp, edits = revid)
+edits <- read_csv("data-raw/edits.csv") %>% select(-1)  # drop index col
+use_data(edits, overwrite = OVERWRITE)
 
-
-# Views
-# =====
-views <- read_csv("data-raw/views.csv")
-use_data(views, overwrite = TRUE)
+# Generations
+# ===========
+generations <- read_csv("data-raw/generations.csv") %>% select(-1)  # drop index col
+use_data(generations, overwrite = OVERWRITE)
 
 
 # Merge all data
@@ -46,7 +44,7 @@ use_data(views, overwrite = TRUE)
 random1000 <- articles %>%
   left_join(qualities) %>%
   left_join(edits) %>%
-  left_join(views)
+  left_join(generations)
 
 # Set order for article classes
 article_classes <- c("Stub", "Start", "C", "B", "GA", "FA")
@@ -66,4 +64,4 @@ random1000 <- random1000 %>%
   filter(year0 >= 0)
 
 
-use_data(random1000, overwrite = TRUE)
+use_data(random1000, overwrite = OVERWRITE)
