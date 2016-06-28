@@ -1,5 +1,6 @@
 import sqlite3
 
+import pandas
 import unipath
 
 DB_NAME = 'wikischolar.sqlite'

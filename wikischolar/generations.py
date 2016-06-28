@@ -44,5 +44,6 @@ def count_generations(revisions):
     return generations
 
 
-def checksum(text):
+def checksum(text=None):
+    text = text or ''
     return hashlib.sha1(text.encode('utf-8')).hexdigest()
