@@ -2,6 +2,7 @@
 library(dplyr)
 library(broom)
 library(lubridate)
+library(magrittr)
 
 library(ggplot2)
 library(gridExtra)
@@ -17,6 +18,18 @@ random1000 <- random1000 %>%
   recode_quadratic %>%
   group_by(title) %>%
   mutate(quality_diff = c(NA, diff(quality))) %>%
+  ungroup
+
+# measure cumulative sums and generations
+random1000 %<>%
+  group_by(title) %>%
+  mutate(
+    edits_sum = cumsum(edits),
+    generations_sum = cumsum(generations),
+    # recode for quadtratic models
+    edits_sum_sqr = edits_sum^2,
+    generations_sum_sqr = generations_sum^2
+  ) %>%
   ungroup
 
 ## ---- theme
@@ -67,10 +80,7 @@ date_preds <- cbind(date_preds_x, date_preds_y) %>%
 age_mod <- lmer(quality ~ age + age_sqr + (age + age_sqr|title), data = random1000)
 tidy(age_mod, effects = "fixed")
 
-age_preds_x <- unique(random1000[, c("age", "age_sqr")])
-age_preds_y <- predictSE(age_mod, age_preds_x, se = TRUE)
-age_preds <- cbind(age_preds_x, age_preds_y) %>%
-  select(age, quality = fit, se = se.fit)
+age_preds <- lmer_preds(random1000, c("age", "age_sqr"), age_mod)
 
 ## ---- quality
 date <- base_plot +
@@ -110,9 +120,60 @@ edits <- base_plot +
   scale_x_continuous("raw edits") +
   scale_y_quality_diff
 
-views <- base_plot +
-  geom_point(aes(x = views, y = quality_diff),
+generations <- base_plot +
+  geom_point(aes(x = generations, y = quality_diff),
              color = colors[["green"]], shape = 1) +
   scale_y_quality_diff
 
-grid.arrange(views, edits, nrow = 1)
+grid.arrange(edits, generations, nrow = 1)
+
+## ---- edit-types
+ggplot(random1000, aes(x = edits, y = generations)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+ggplot(random1000, aes(x = edits_sum, y = generations_sum)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+## ---- edits-mod
+edits_mod <- lmer(quality ~ edits_sum + (edits_sum|title),
+                  data = random1000)
+tidy(edits_mod, effects = "fixed")
+
+edits_preds <- lmer_preds(random1000, "edits_sum", edits_mod)
+
+## ---- generations-mod
+generations_mod <- lmer(quality ~ generations_sum + (generations_sum|title),
+                        data = random1000)
+tidy(generations_mod, effects = "fixed")
+
+generations_preds <- lmer_preds(random1000, "generations_sum", generations_mod)
+
+## ---- cumulative-edits
+base_plot +
+  ggtitle("Article quality by cumulative edits") +
+  geom_line(aes(x = edits_sum, y = quality, group = title),
+            color = colors[["blue"]], alpha = 0.2) +
+  geom_point(aes(x = edits_sum, y = quality, group = 1),
+             stat = "summary", fun.y = "mean",
+             size = 2, color = "black") +
+  geom_line(aes(x = edits_sum, y = quality),
+            data = edits_preds,
+            size = 2, color = colors[["orange"]], alpha = 0.6) +
+  scale_y_quality +
+  quality_coords
+
+## ---- cumulative-generations
+base_plot +
+  ggtitle("Article quality by cumulative edits") +
+  geom_line(aes(x = generations_sum, y = quality, group = title),
+            color = colors[["blue"]], alpha = 0.2) +
+  geom_point(aes(x = generations_sum, y = quality, group = 1),
+             stat = "summary", fun.y = "mean",
+             size = 2, color = "black") +
+  geom_line(aes(x = generations_sum, y = quality),
+            data = generations_preds,
+            size = 2, color = colors[["orange"]], alpha = 0.6) +
+  scale_y_quality +
+  quality_coords

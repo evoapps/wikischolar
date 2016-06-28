@@ -76,6 +76,21 @@ The `age_mod` predicts article quality from the age of the article, independent 
 ```{r, predictors, fig.width = 10}
 ```
 
+```{r, edit-types}
+```
+
+```{r, edits-mod, cache = TRUE}
+```
+
+```{r, generations-mod, cache = TRUE}
+```
+
+```{r, cumulative-edits}
+```
+
+```{r, cumulative-generations}
+```
+
 # Discussion
 
 As Wikipedia itself has gotten older, the average article quality has tended to increase.  Moreover, the rate of change has also increased. One possible explanation for this finding is that editors have become more efficient in their ability to make large improvements to articles. For example, automated tools used to monitor article quality may make it easier to direct editor attention to articles that are lacking in quality.
