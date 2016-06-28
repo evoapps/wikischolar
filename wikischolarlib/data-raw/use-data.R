@@ -58,7 +58,6 @@ random1000 <- random1000 %>%
   ungroup %>%
   mutate(age = year - year0)
 
-
 # Drop weird observations
 random1000 <- random1000 %>%
   filter(year0 >= 0)

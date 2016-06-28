@@ -15,22 +15,10 @@ library(wikischolarlib)
 data("random1000")
 
 random1000 <- random1000 %>%
-  recode_quadratic %>%
-  group_by(title) %>%
-  mutate(quality_diff = c(NA, diff(quality))) %>%
-  ungroup
-
-# measure cumulative sums and generations
-random1000 %<>%
-  group_by(title) %>%
-  mutate(
-    edits_sum = cumsum(edits),
-    generations_sum = cumsum(generations),
-    # recode for quadtratic models
-    edits_sum_sqr = edits_sum^2,
-    generations_sum_sqr = generations_sum^2
-  ) %>%
-  ungroup
+  recode_quality %>%
+  recode_age %>%
+  recode_edits %>%
+  recode_generations
 
 ## ---- theme
 base_plot <- ggplot(random1000) +

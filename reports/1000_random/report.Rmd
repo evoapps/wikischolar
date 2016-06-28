@@ -23,13 +23,9 @@ read_chunk("1000_random.R")
 ```{r, setup}
 ```
 
-Is Wikipedia getting better? This report investigates two approaches to this question. First, Wikipedia in general could be improving, in which case we would expect the average article to be of higher quality in 2015 than it was in previous years. Another way to measure quality changes over time is in terms of the age of individual articles, in which case we would expect to see article quality tend to improve as the article ages.
-
-To answer these questions, 1000 Wikipedia articles were randomly sampled, and an estimate of their quality was obtained by submitting yearly versions of each article to a machine learning algorithm trained to predict an article's quality class. The results show that Wikipedia is in general improving, and that articles tend to improve in quality as they age. Although both of these relationships are positive, the rate of change is different. Overall Wikipedia is improving more rapidly, whereas older articles tend to improve less rapidly.
-
 # Methods
 
-The data used in this report is available on [github](https://github.com/evoapps/wikischolar), and can be installed using the following command: `devtools::install_github('evoapps/wikischolar', subdir = 'wikischolarlib')`.
+The data used in this report is available on [github](https://github.com/evoapps/wikischolar), and can be installed using the following command: `devtools::install_github("evoapps/wikischolar", subdir = "wikischolarlib")`.
 
 ```{r, data, echo = TRUE}
 ```
