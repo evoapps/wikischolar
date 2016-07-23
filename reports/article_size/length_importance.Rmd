@@ -1,0 +1,15 @@
+---
+title: "Relationship between importance and length in Wikipedia's Featured Articles"
+author: "Pierce Edmiston"
+output:
+  html_document:
+    theme: flatly
+---
+
+```{r}
+library(wikischolarlib)
+data("featured1000")
+
+ggplot(featured1000, aes(x = importance, y = article_length)) +
+  geom_point()
+```
