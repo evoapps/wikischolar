@@ -8,10 +8,14 @@ import unipath
 
 from .util import get_page
 
+def get_wiki(title):
+    """Retrieve the contents of a wiki page."""
+    return get_page(title).get()
+
 
 def get_table(title):
     """Retrieve a table of articles from a wiki page."""
-    wiki_text = get_page(title).get()
+    wiki_text = get_wiki(title)
     table = convert_wiki_to_table(wiki_text)
     data = tidy_wiki_table(table)
     return data

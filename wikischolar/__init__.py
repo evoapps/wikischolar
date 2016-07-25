@@ -7,3 +7,4 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
 from . import db, revisions, edits, generations, quality, tasks
+from .get import get_wiki

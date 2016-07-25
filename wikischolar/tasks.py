@@ -16,6 +16,15 @@ VIEWS_TABLE = 'views'
 
 
 @task
+def get(ctx, title, output=None):
+    """Get the content of a Wikipedia page from its title."""
+    text = wikischolar.get_wiki(title)
+    out = open(output, 'w') if output else sys.stdout
+    out.write(text)
+    out.close()
+
+
+@task
 def load(ctx, articles, database=None, table=None, title_col='title'):
     """Populate a new wikischolar database with articles to study.
 
@@ -185,6 +194,7 @@ def generations(ctx, database=None):
 
 
 namespace = Collection(
+    get,
     load,
     dump,
     execute,
