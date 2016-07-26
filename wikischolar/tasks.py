@@ -167,39 +167,13 @@ def generations(ctx, database=None):
         db.close()
 
 
-# @task(aliases=['views'],
-#       help=dict(articles=ARTICLES, output=OUTPUT, single=SINGLE))
-# def yearly_page_views(articles, output=None, single=False):
-#     """Get yearly page view sums for each article."""
-#     articles = read(articles, single, 'title')
-#     totals = views.yearly_page_views(articles)
-#     save(totals, output)
-
-
-# @task
-# def clean():
-#     """Remove junk files."""
-#     cmd = 'rm -rf {}'
-#     patterns = [
-#         # wiki
-#         'apicache',
-#         'throttle.ctrl',
-#         '*.lwp',
-#
-#         # knitr
-#         '*-figs/',
-#     ]
-#     for pattern in patterns:
-#         run(cmd.format(pattern))
-
-
 namespace = Collection(
     get,
     load,
     dump,
     execute,
     revisions,
-    qualities,
     edits,
+    qualities,
     generations,
 )

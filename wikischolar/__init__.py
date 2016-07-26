@@ -6,5 +6,4 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
-from . import db, revisions, edits, generations, quality, tasks
-from .get import get_wiki
+from . import db, edits, generations, quality, revisions, tasks, util

@@ -6,9 +6,37 @@ import unipath
 
 
 def get_page(title):
+    """Returns a pywikibot.Page given a single title."""
     site = pywikibot.Site('en', 'wikipedia')
     page = pywikibot.Page(site, title)
     return page
+
+
+def get_wiki(title):
+    """Returns the contents of a wiki page in wiki syntax."""
+    return get_page(title).get()
+
+
+def get_table(title):
+    """Return the first table on a wiki page as a pandas.DataFrame."""
+    wiki_text = get_wiki(title)
+    table = convert_wiki_to_table(wiki_text)
+    data = tidy_wiki_table(table)
+    return data
+
+
+def convert_wiki_to_table(wiki_text):
+    html_text = pypandoc.convert(wiki_text, 'html', 'mediawiki')
+    tables = pandas.read_html(html_text)
+    table = tables[0]  # take the first table only
+    return table
+
+
+def tidy_wiki_table(table):
+    slugify = lambda s: s.strip('|').lower().replace(' ', '_')
+    data = table.rename(columns=slugify)
+    return data
+
 
 
 def mkdir(dst):
