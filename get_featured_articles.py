@@ -17,4 +17,7 @@ featured['title'] = featured.line.str.extract(re_title, expand=False)
 
 # Select all rows with title and category
 featured = featured[['category', 'title']].dropna()
-featured.to_csv('data/featured/Featured_articles.csv', index=False)
+
+# Select a sample of 1000 articles
+featured1000 = featured.sample(1000, random_state=823)
+featured1000.to_csv('data/featured/articles.csv', index=False)
