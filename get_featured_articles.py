@@ -13,7 +13,10 @@ featured['category'] = (featured.line
 
 # Extract title
 re_title = r'^\*.+\[\[(.+)\]\]'
-featured['title'] = featured.line.str.extract(re_title, expand=False)
+featured['title'] = (featured.line
+                             .str.extract(re_title, expand=False)
+                             .str.split('|')
+                             .str.get(0))
 
 # Select all rows with title and category
 featured = featured[['category', 'title']].dropna()
