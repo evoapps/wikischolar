@@ -1,0 +1,25 @@
+---
+title: "The lifespan of Wikipedia's Featured Articles"
+author: "Pierce Edmiston"
+output:
+  html_document:
+    theme: flatly
+---
+
+There are many different ways that one article can exhibit monotonic growth in its lifespan.
+
+```{r config}
+library(wikischolarlib)
+data("featured1000")
+
+# Find most linear article
+linear <- lmer(quality ~ age + (age|title), data = featured1000)
+linear_coefs <- tidy(linear) %>% filter(param == "age") %>% arrange(estimate)
+
+# Find most and least quadratic
+quad <- lmer(quality ~ age + age_sqr + (age + age_sqr|title), data = featured1000)
+quad_coefs <- tidy(quad) %>% filter(param == "age_sqr")
+most_coefs <- quad_coefs %>% arrange(desc(age_sqr))
+least_coefs <- quad_coefs %>% arrange(age_sqr)
+```
+
