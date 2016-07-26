@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import pandas
 import wikischolar
 
@@ -23,4 +24,4 @@ featured = featured[['category', 'title']].dropna()
 
 # Select a sample of 1000 articles
 featured1000 = featured.sample(1000, random_state=823)
-featured1000.to_csv('data/featured/articles.csv', index=False)
+featured1000.to_csv(sys.stdout, index=False)
