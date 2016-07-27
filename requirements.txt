@@ -4,7 +4,7 @@ decorator==4.0.9
 gnureadline==6.3.3
 httplib2==0.9.2
 -e git+git@github.com:pedmiston/invoke.git@3dc0dd7aad6df48710c64db3e951da251f3b89f5#egg=invoke
-ipython==4.2.0
+ipython==5.0.0
 ipython-genutils==0.1.0
 lxml==3.6.0
 mediawiki-utilities==0.4.18

@@ -40,7 +40,7 @@ def install(ctx):
 @task
 def get_featured_articles(ctx):
     """Download 1000 random featured articles."""
-    wiki_text = wikischolar.get_wiki('Wikipedia:Featured_articles')
+    wiki_text = wikischolar.util.get_wiki('Wikipedia:Featured_articles')
     featured = pandas.DataFrame({'line': wiki_text.splitlines()})
 
     # Extract section headers
@@ -67,6 +67,6 @@ def get_featured_articles(ctx):
 @task
 def get_random_articles(ctx):
     """Download User:Smallbones 1000 random articles."""
-    table = wikischolar.get.get_table('User:Smallbones/1000_random')
+    table = wikischolar.util.get_table('User:Smallbones/1000_random')
     articles = table[['title']]
     articles.to_csv(sys.stdout, index=False)

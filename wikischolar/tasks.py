@@ -18,7 +18,7 @@ VIEWS_TABLE = 'views'
 @task
 def get(ctx, title, output=None):
     """Get the content of a Wikipedia page from its title."""
-    text = wikischolar.get_wiki(title)
+    text = wikischolar.util.get_wiki(title)
     out = open(output, 'w') if output else sys.stdout
     out.write(text)
     out.close()
@@ -131,7 +131,11 @@ def revisions(ctx, database=None, articles_table=None):
 
 @task
 def edits(ctx, database=None):
-    """Tally the number of yearly edits from a list of articles."""
+    """Tally the number of yearly edits from a list of articles.
+
+    TODO: Make checkout all revisions return an iterator,
+          and allow count yearly edits to accept an iterator.
+    """
     db = wikischolar.db.connect(database)
     try:
         all_revisions = wikischolar.revisions.checkout_all_revisions(db)

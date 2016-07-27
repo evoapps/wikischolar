@@ -3,6 +3,7 @@ import sys
 import pywikibot
 import pandas
 import unipath
+import pypandoc
 
 
 def get_page(title):
