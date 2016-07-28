@@ -171,6 +171,19 @@ def generations(ctx, database=None):
         db.close()
 
 
+@task
+def words(ctx, database=None):
+    """Count the number of words in each revision."""
+    offset = pandas.tseries.offsets.YearEnd()
+    db = wikischolar.db.connect(database)
+    try:
+        sample = wikischolar.revisions.resample_revisions(db, offset)
+        counts = wikischolar.text.count_words(sample)
+        counts.to_sql('words', db, if_exists='append', index=False)
+    finally:
+        db.close()
+
+
 namespace = Collection(
     get,
     load,
@@ -180,4 +193,5 @@ namespace = Collection(
     edits,
     qualities,
     generations,
+    words,
 )
