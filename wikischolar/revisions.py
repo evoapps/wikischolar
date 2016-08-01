@@ -5,7 +5,7 @@ import time
 import pywikibot
 import pandas
 
-from .util import get_page
+import wikischolar
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ def get_revisions(title, content=False):
     Returns:
         A pandas.DataFrame of revisions.
     """
-    page = get_page(title)
+    page = wikischolar.util.get_page(title)
     revision_gen = page.revisions(content=content)
     # hack to turn pywikibot.Revisions into records for pandas
     revision_list = [revision.__dict__ for revision in revision_gen]
