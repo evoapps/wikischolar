@@ -70,6 +70,8 @@ def load(ctx, articles, database=None, table=None, title_col='title'):
     table = table or ARTICLES_TABLE
     try:
         articles.to_sql(table, db, if_exists='append', index=False)
+        msg = 'Successfully loaded {} article titles'
+        logger.debug(msg.format(len(articles)))
     finally:
         db.close()
 

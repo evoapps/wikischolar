@@ -17,8 +17,11 @@ def save_all_revisions(titles, db):
     """Retrieve revisions for all titles and save to the db."""
     # NB: Not trying this multithreaded because I doubt pandas+sqlite
     #     can handle simultaneous writes.
-    for title in titles:
+    num_articles = len(titles)
+    for (i, title) in enumerate(titles):
         save_revisions(title, db)
+        msg = 'Saved revisions for {} ({}/{})'
+        logger.debug(msg.format(title, i+1, num_articles))
 
 
 def checkout_all_revisions(db):
