@@ -24,11 +24,29 @@ def save_all_revisions(titles, db):
         logger.debug(msg.format(title, i+1, num_articles))
 
 
-def checkout_all_revisions(db):
-    sql_query = 'SELECT * FROM {}'.format(DB_TABLE)
+def checkout_all_revisions(db, columns=None):
+    """Checkout revisions for all titles in the db.
+
+    Args:
+        db (sqlite3 connection)
+        columns (str, list): The columns to return. Defaults to all columns.
+            When checking out lots of revisions, it's a good idea to only
+            select the minimally needed columns.
+    """
+    if columns is None:
+        sql_select = '*'
+    elif isinstance(columns, list):
+        sql_select = ','.join(columns)
+    else:
+        sql_select = columns
+
+    sql_query = 'SELECT {} FROM {}'.format(sql_select, DB_TABLE)
     revisions = pandas.read_sql_query(sql_query, db)
-    # sqlite doesn't have a timestamp format
-    revisions['timestamp'] = pandas.to_datetime(revisions.timestamp)
+
+    if 'timestamp' in revisions.columns:
+        # sqlite doesn't have a timestamp format
+        revisions['timestamp'] = pandas.to_datetime(revisions.timestamp)
+
     return revisions
 
 
