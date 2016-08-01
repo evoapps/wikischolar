@@ -140,7 +140,9 @@ def edits(ctx, database=None):
     """
     db = wikischolar.db.connect(database)
     try:
-        all_revisions = wikischolar.revisions.checkout_all_revisions(db)
+        all_revisions = wikischolar.revisions.checkout_all_revisions(
+            db, columns=['timestamp', 'title', 'revid'],
+        )
         counts = wikischolar.edits.count_yearly_edits(all_revisions)
         counts.to_sql('edits', db, if_exists='append', index=False)
     finally:
