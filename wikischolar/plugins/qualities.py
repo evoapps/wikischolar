@@ -26,7 +26,8 @@ def qualities(revisions, offset='YearEnd'):
                        .groupby('title')
                        .resample(offset)
                        .last()
-                       .reset_index(level=0, drop=True))
+                       .reset_index(level=0, drop=True)
+                       .reset_index())
     qualities = wp10_qualities(sample)
     return qualities
 
@@ -48,8 +49,8 @@ def wp10_qualities(revisions):
         results = executor.map(get_wp10, chunks)
 
     qualities_by_revid = pandas.concat(results)
-    labeled_qualities = pandas.merge(revisions, qualities_by_revid)
-    return labeled_qualities
+    labeled = qualities_by_revid.merge(revisions[['title', 'timestamp', 'revid']])
+    return labeled
 
 
 def get_qualities(articles_group, endpoint, score_formatter):
@@ -85,6 +86,8 @@ def format_wp10_scores(scores):
         scores[category] = unfold_probs(name=category)
     del scores['score']
     del scores['probabilities']
+    if 'probability' in scores:
+        del scores['probability']
 
     return scores
 

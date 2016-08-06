@@ -18,8 +18,8 @@ def plugin(func):
 
         if database:
             results.to_sql(table, database, if_exists='append', index=False)
-        else:
-            return results
+
+        return results
 
 
     PLUGINS[table] = save
