@@ -14,6 +14,20 @@ EDITS_TABLE = 'edits'
 GENERATIONS_TABLE = 'generations'
 VIEWS_TABLE = 'views'
 
+@task
+def checkout(ctx, articles, features=None):
+    plugins = []
+    for feature in features.split(','):
+        plugin = getattr(wikischolar.plugins, feature)
+        if plugin:
+            plugins.append(plugin)
+
+    articles = pandas.read_csv(articles)
+
+    print(articles, features)
+
+
+
 
 @task
 def get(ctx, title, output=None):
