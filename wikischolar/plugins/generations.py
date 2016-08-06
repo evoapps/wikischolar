@@ -12,6 +12,7 @@ def generations(revisions, offset='YearEnd'):
     counts = (revisions.set_index('timestamp')
                        .groupby('title')
                        .apply(count_generations)
+                       .reset_index(level=0, drop=True)
                        .resample(offset)
                        .count())
     counts.name = 'generations'
@@ -20,6 +21,7 @@ def generations(revisions, offset='YearEnd'):
 
 def count_generations(revisions):
     # assume revisions are ordered in increasing time
+    revisions.reset_index(inplace=True)
     revisions.set_index(revisions.text.apply(checksum), inplace=True)
     parsed = reverts.detect(revisions.iterrows())
 
@@ -34,6 +36,8 @@ def count_generations(revisions):
 
     revisions = revisions.merge(rev_map)
     revisions = revisions.ix[revisions.is_extinct == 0.0]
+    revisions.reset_index(drop=True)
+    revisions.set_index('timestamp', inplace=True)
     return revisions
 
 
