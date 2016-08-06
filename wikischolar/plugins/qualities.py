@@ -14,6 +14,8 @@ WP10_URL = 'https://ores.wmflabs.org/v2/scores/enwiki/wp10/'
 MAX_ORES_THREADS = 4
 MAX_ORES_REVIDS = 50
 
+session = requests.Session()
+
 
 @wikischolar.plugin
 def qualities(revisions, offset='YearEnd'):
@@ -58,7 +60,7 @@ def get_qualities(articles_group, endpoint, score_formatter):
         error_msg.format(len(revids), MAX_ORES_REVIDS)
 
     revids_str = '|'.join(map(str, revids))
-    response = requests.get(endpoint, params=dict(revids=revids_str))
+    response = session.get(endpoint, params=dict(revids=revids_str))
     return score_formatter(response.json()['scores'])
 
 

@@ -70,3 +70,9 @@ def get_random_articles(ctx):
     table = wikischolar.util.get_table('User:Smallbones/1000_random')
     articles = table[['title']]
     articles.to_csv(sys.stdout, index=False)
+
+
+@task
+def clean(ctx):
+    trash = '.cache/ throttle.ctrl apicache/'
+    run('rm -rf {}'.format(trash))
