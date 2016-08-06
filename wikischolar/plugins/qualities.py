@@ -1,4 +1,5 @@
 from concurrent import futures
+from operator import itemgetter
 import functools
 
 import pandas
@@ -25,7 +26,7 @@ def qualities(revisions, offset='YearEnd'):
                        .groupby('title')
                        .resample(offset)
                        .last()
-                       .revid)
+                       .reset_index(level=0, drop=True))
     qualities = wp10_qualities(sample)
     return qualities
 
@@ -72,9 +73,13 @@ def format_wp10_scores(scores):
     scores.reset_index(inplace=True)
     scores['revid'] = scores.revid.astype(int)
 
+    scores.score.fillna(method='ffill', inplace=True)
+    scores.score.fillna(method='bfill', inplace=True)
+
     scores['prediction'] = unfold(scores.score, 'prediction')
     scores['probabilities'] = unfold(scores.score, 'probability')
     unfold_probs = functools.partial(unfold, objects=scores.probabilities)
+
     prob_categories = sorted(scores.probabilities.iloc[0].keys())
     for category in prob_categories:
         scores[category] = unfold_probs(name=category)
@@ -86,4 +91,4 @@ def format_wp10_scores(scores):
 
 def unfold(objects, name):
     """Pull the named value out of a Series of dicts."""
-    return objects.apply(lambda x: x[name])
+    return objects.apply(itemgetter(name))
