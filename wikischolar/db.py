@@ -6,6 +6,7 @@ import unipath
 
 DB_NAME = 'wikischolar.sqlite'
 
+
 def connect(database, must_exist=True):
     """Return a connection to a sqlite database.
 

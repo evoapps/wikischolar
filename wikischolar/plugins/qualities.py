@@ -1,7 +1,6 @@
 from concurrent import futures
 import functools
 
-import pywikibot
 import pandas
 from numpy import arange
 import requests
@@ -24,7 +23,7 @@ def qualities(revisions, offset='YearEnd'):
                        .groupby('title')
                        .resample(offset)
                        .last()
-                       ['revid'])
+                       .revid)
     qualities = wp10_qualities(sample)
     return qualities
 

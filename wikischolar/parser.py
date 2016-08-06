@@ -1,6 +1,7 @@
 import pandas
 import wikischolar
 
+
 def load_offset(offset):
     return getattr(pandas.tseries.offsets, offset)()
 

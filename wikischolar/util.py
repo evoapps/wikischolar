@@ -34,10 +34,12 @@ def convert_wiki_to_table(wiki_text):
 
 
 def tidy_wiki_table(table):
-    slugify = lambda s: s.strip('|').lower().replace(' ', '_')
     data = table.rename(columns=slugify)
     return data
 
+
+def slugify(s):
+    return s.strip('|').lower().replace(' ', '_')
 
 
 def mkdir(dst):

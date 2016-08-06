@@ -1,12 +1,12 @@
 import sys
 import logging
-logger = logging.getLogger(__name__)
 
-from invoke import task, run, Collection
+from invoke import task, Collection
 import pandas
-import unipath
 
 import wikischolar
+
+logger = logging.getLogger(__name__)
 
 
 @task
@@ -23,18 +23,17 @@ def checkout(ctx, articles, plugins=None, database=None):
         plugins (str): Names of plugins to process each article.
         database (str): Name of sqlite database for storing the results.
     """
-    articles = load_articles(articles)
-    revisions = load_revisions(articles.title)
-    plugins = load_plugins(plugins.split(','))
+    articles = wikischolar.parser.load_articles(articles)
+    revisions = wikischolar.parser.load_revisions(articles.title)
+    plugins = wikischolar.parser.load_plugins(plugins.split(','))
     database = wikischolar.db.connect(database)
     for chunk in revisions:
         for plugin in plugins:
             try:
                 plugin(chunk, database=database)
-            except wikischolar.plugin.PluginError as err:
+            except wikischolar.plugins.PluginError as err:
                 logger.debug('PluginError: {}'.format(err))
     database.close()
-
 
 
 @task

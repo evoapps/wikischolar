@@ -1,11 +1,10 @@
-import functools
 import hashlib
 
 import pandas
-import pywikibot
 from mw.lib import reverts
 
 import wikischolar
+
 
 @wikischolar.plugin
 def generations(revisions, offset='YearEnd'):
