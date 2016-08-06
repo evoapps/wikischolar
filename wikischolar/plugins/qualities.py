@@ -62,18 +62,22 @@ def get_qualities(articles_group, endpoint, score_formatter):
     return score_formatter(response.json()['scores'])
 
 
-def format_wp10_scores(response_json):
-    score_dicts = response_json['enwiki']['wp10']['scores']
-    scores = pandas.DataFrame.from_dict(score_dicts, orient='index')
+def format_wp10_scores(scores):
+    wp10_scores = scores['enwiki']['wp10']['scores']
+    scores = pandas.DataFrame.from_dict(wp10_scores, orient='index')
+
     scores.index.name = 'revid'
     scores.reset_index(inplace=True)
     scores['revid'] = scores.revid.astype(int)
 
-    unfold_probs = functools.partial(unfold, objects=scores.probability)
-    prob_categories = sorted(scores.probability.iloc[0].keys())
+    scores['prediction'] = unfold(scores.score, 'prediction')
+    scores['probabilities'] = unfold(scores.score, 'probability')
+    unfold_probs = functools.partial(unfold, objects=scores.probabilities)
+    prob_categories = sorted(scores.probabilities.iloc[0].keys())
     for category in prob_categories:
         scores[category] = unfold_probs(name=category)
-    del scores['probability']
+    del scores['score']
+    del scores['probabilities']
 
     return scores
 
