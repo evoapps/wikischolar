@@ -1,3 +1,4 @@
+PLUGINS = {}
 
 def plugin(func):
     """Decorator for plugins. Saves results to a database."""
@@ -10,6 +11,7 @@ def plugin(func):
             raise PluginError(msg.format(table, err))
         else:
             results.to_sql(table, results, if_exists='append', index=False)
+    PLUGINS[table] = save
     return save
 
 
