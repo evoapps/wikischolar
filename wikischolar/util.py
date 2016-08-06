@@ -10,8 +10,6 @@ def get_page(title):
     """Returns a pywikibot.Page given a single title."""
     site = pywikibot.Site('en', 'wikipedia')
     page = pywikibot.Page(site, title)
-    print('wikischolar.util.get_page')
-    print(pywikibot.comms.http.session)
     return page
 
 
