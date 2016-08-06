@@ -1,9 +1,2 @@
-#!/usr/bin/env python
-import sys
-import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler())
-
-from . import db, edits, generations, quality, revisions, tasks, text, util
+from .plugins import plugin
+from . import db, parser, revisions, tasks, util

@@ -6,12 +6,27 @@ import pandas
 from numpy import arange
 import requests
 
+import wikischolar
+
 # Endpoint to enwiki ORES article quality model
 WP10_URL = 'https://ores.wmflabs.org/v2/scores/enwiki/wp10/'
 
 # ORES API throttle
 MAX_ORES_THREADS = 4
 MAX_ORES_REVIDS = 50
+
+
+@wikischolar.plugin
+def qualities(revisions, offset='YearEnd'):
+    """Predict article quality for sampled revisions."""
+    offset = wikischolar.parser.get_offset(offset)
+    sample = (revisions.set_index('timestamp')
+                       .groupby('title')
+                       .resample(offset)
+                       .last()
+                       ['revid'])
+    qualities = wp10_qualities(sample)
+    return qualities
 
 
 def wp10_qualities(revisions):

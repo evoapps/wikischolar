@@ -5,22 +5,18 @@ import pandas
 import pywikibot
 from mw.lib import reverts
 
-from wikischolar.edits import count_yearly_edits
+import wikischolar
 
-def count_yearly_generations(revisions):
-    """Count the generations of edits excluding reversions.
-
-    Args:
-        revisions (pandas.DataFrame): A table of revisions.
-    Returns:
-        A pandas.DataFrame of generations of edits for each year of an
-        article's existence.
-    """
-    offset = pandas.tseries.offsets.YearEnd()
-    generations = (revisions.groupby('title')
-                            .apply(count_generations))
-
-    return generations
+@wikischolar.plugin
+def generations(revisions, offset='YearEnd'):
+    offset = wikischolar.parser.get_offset(offset)
+    counts = (revisions.set_index('timestamp')
+                       .groupby('title')
+                       .apply(count_generations)
+                       .resample(offset)
+                       .count())
+    counts.name = 'generations'
+    return counts.reset_index()
 
 
 def count_generations(revisions):
@@ -38,10 +34,8 @@ def count_generations(revisions):
     rev_map = rev_map.reset_index()
 
     revisions = revisions.merge(rev_map)
-    generations = count_yearly_edits(revisions.ix[revisions.is_extinct == 0.0],
-                                     name='generations')
-
-    return generations
+    revisions = revisions.ix[revisions.is_extinct == 0.0]
+    return revisions
 
 
 def checksum(text=None):

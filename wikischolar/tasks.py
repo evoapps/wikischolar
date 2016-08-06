@@ -8,24 +8,32 @@ import unipath
 
 import wikischolar
 
-ARTICLES_TABLE = 'articles'
-REVISIONS_TABLE = 'revisions'
-EDITS_TABLE = 'edits'
-GENERATIONS_TABLE = 'generations'
-VIEWS_TABLE = 'views'
 
 @task
-def checkout(ctx, articles, features=None):
-    plugins = []
-    for feature in features.split(','):
-        plugin = getattr(wikischolar.plugins, feature)
-        if plugin:
-            plugins.append(plugin)
+def checkout(ctx, articles, plugins=None, database=None):
+    """Checkout revisions for articles and process them with plugins.
 
-    articles = pandas.read_csv(articles)
+    Checks out revisions in chunks and passes each chunk through each
+    of the plugins.
 
-    print(articles, features)
+    This function is intended to be called with command line arguments.
 
+    Args:
+        articles (str): Path to a csv file of articles.
+        plugins (str): Names of plugins to process each article.
+        database (str): Name of sqlite database for storing the results.
+    """
+    articles = load_articles(articles)
+    revisions = load_revisions(articles.title)
+    plugins = load_plugins(plugins.split(','))
+    database = wikischolar.db.connect(database)
+    for chunk in revisions:
+        for plugin in plugins:
+            try:
+                plugin(chunk, database=database)
+            except wikischolar.plugin.PluginError as err:
+                logger.debug('PluginError: {}'.format(err))
+    database.close()
 
 
 
@@ -36,58 +44,6 @@ def get(ctx, title, output=None):
     out = open(output, 'w') if output else sys.stdout
     out.write(text)
     out.close()
-
-
-@task
-def load(ctx, articles, database=None, table=None, title_col='title'):
-    """Populate a new wikischolar database with articles to study.
-
-    This function is meant to be used on the command line as an invoke task.
-
-    Args:
-        articles (str): Article title or path to a csv of articles.
-        database (str, optional): Path to sqlite database to use. Defaults to
-            a database named "wikischolar.sqlite" in the current directory.
-        table (str, optional): Name of the table in the db in which to save
-            the articles. By default the table is named 'articles'.
-        title_col (str, optional): If ``articles`` is a path to a csv,
-            ``title_col`` specifies which column contains the article titles.
-            The default expected title column name is 'title'.
-
-    Examples:
-        Load an article from it's title:
-
-        >>> load("Splendid fairywren")
-
-        By default the articles are stored in a local sqlite database, with
-        the default table name "articles". Specify a database name manually
-        with the ``database`` option in a custom table if necessary:
-
-        >>> load("Splendid fairywren", database="data/wikischolar.sqlite",
-                 table="birds")
-
-        You can include multiple titles if they are stored in a csv.
-        If a csv is provided, a column containing article titles is expected.
-        By default, the expected name is 'title' but this can be changed:
-
-        >>> load("data/articles.csv")
-        >>> load("data/other-articles.csv", title_col="name")
-    """
-    if unipath.Path(articles).exists():
-        articles = pandas.read_csv(articles)                        # might fail
-        articles.rename(columns={title_col: 'title'}, inplace=True) # might fail
-    else:
-        titles = articles.split(split_char)   # should always produce a list
-        articles = pandas.DataFrame({'title': titles})
-
-    db = wikischolar.db.connect(database, must_exist=False)
-    table = table or ARTICLES_TABLE
-    try:
-        articles.to_sql(table, db, if_exists='append', index=False)
-        msg = 'Successfully loaded {} article titles'
-        logger.debug(msg.format(len(articles)))
-    finally:
-        db.close()
 
 
 @task
@@ -103,10 +59,6 @@ def dump(ctx, table, select='*', database=None, output=None):
         database (str): Path to sqlite database to use. Defaults to
             a database named "wikischolar.sqlite" in the current directory.
         output (str): Path to csv to save results. Defaults to ``stdout``.
-
-    Examples:
-
-
     """
     output = output or sys.stdout
     sql_query = 'SELECT {} FROM {};'.format(select, table)
@@ -132,84 +84,9 @@ def execute(ctx, cmd, database=None):
         db.close()
 
 
-@task
-def revisions(ctx, database=None, articles_table=None):
-    """Get all versions of articles and save them in a local db."""
-    titles_query = 'SELECT DISTINCT title FROM {};'
-    articles_table = articles_table or ARTICLES_TABLE
-    db = wikischolar.db.connect(database)
-    try:
-        titles = wikischolar.db.query(titles_query.format(articles_table), db)['title']
-        wikischolar.revisions.save_all_revisions(titles, db)
-    finally:
-        db.close()
-
-
-@task
-def edits(ctx, database=None):
-    """Tally the number of yearly edits from a list of articles.
-
-    TODO: Make checkout all revisions return an iterator,
-          and allow count yearly edits to accept an iterator.
-    """
-    db = wikischolar.db.connect(database)
-    try:
-        all_revisions = wikischolar.revisions.checkout_all_revisions(
-            db, columns=['timestamp', 'title', 'revid'],
-        )
-        counts = wikischolar.edits.count_yearly_edits(all_revisions)
-        counts.to_sql('edits', db, if_exists='append', index=False)
-    finally:
-        db.close()
-
-
-@task
-def qualities(ctx, database=None, resample_offset='YearEnd'):
-    """Filter a subset of revisions and save the results in a new table."""
-    offset = getattr(pandas.tseries.offsets, resample_offset)()
-    db = wikischolar.db.connect(database)
-    try:
-        sample = wikischolar.revisions.resample_revisions(db, offset)
-        sample = sample[['title', 'timestamp', 'revid']]
-        qualities = wikischolar.quality.wp10_qualities(sample)
-        qualities.to_sql('qualities', db, if_exists='append', index=False)
-    finally:
-        db.close()
-
-
-@task
-def generations(ctx, database=None):
-    """Count the number of generations (edits excluding reversions)."""
-    db = wikischolar.db.connect(database)
-    try:
-        all_revisions = wikischolar.revisions.checkout_all_revisions(db)
-        counts = wikischolar.generations.count_yearly_generations(all_revisions)
-        counts.to_sql('generations', db, if_exists='append', index=False)
-    finally:
-        db.close()
-
-
-@task
-def words(ctx, database=None):
-    """Count the number of words in each revision."""
-    offset = pandas.tseries.offsets.YearEnd()
-    db = wikischolar.db.connect(database)
-    try:
-        sample = wikischolar.revisions.resample_revisions(db, offset)
-        counts = wikischolar.text.count_words(sample)
-        counts.to_sql('words', db, if_exists='append', index=False)
-    finally:
-        db.close()
-
-
 namespace = Collection(
     get,
-    load,
+    checkout,
     dump,
     execute,
-    revisions,
-    edits,
-    qualities,
-    generations,
-    words,
 )
