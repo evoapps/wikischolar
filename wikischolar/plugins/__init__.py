@@ -1,3 +1,5 @@
+import functools
+
 
 PLUGINS = {}
 
@@ -6,6 +8,7 @@ def plugin(func):
     """Decorator for plugins. Saves results to a database."""
     table = func.__name__
 
+    @functools.wraps(func)
     def save(*args, database=None, **kwargs):
         try:
             results = func(*args, **kwargs)

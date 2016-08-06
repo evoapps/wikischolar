@@ -22,3 +22,7 @@ def load_plugins(names):
 def load_revisions(titles):
     for title in titles:
         yield wikischolar.revisions.get_revisions(title, content=True)
+
+
+def load_articles(articles):
+    return pandas.read_csv(articles)

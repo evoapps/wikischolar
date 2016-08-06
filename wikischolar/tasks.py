@@ -24,11 +24,15 @@ def checkout(ctx, articles, plugins=None, database=None):
         database (str): Name of sqlite database for storing the results.
     """
     articles = wikischolar.parser.load_articles(articles)
+    total_num_articles = len(articles)
     revisions = wikischolar.parser.load_revisions(articles.title)
     plugins = wikischolar.parser.load_plugins(plugins.split(','))
-    database = wikischolar.db.connect(database)
-    for chunk in revisions:
+    database = wikischolar.db.connect(database, must_exist=False)
+    for (i, chunk) in enumerate(revisions):
+        current_article = chunk.title.iloc[0]
         for plugin in plugins:
+            current_plugin = plugin.__name__
+            logger.debug('({}/{}) {}: {}'.format(i+1, total_num_articles, current_article, current_plugin))
             try:
                 plugin(chunk, database=database)
             except wikischolar.plugins.PluginError as err:
