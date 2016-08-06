@@ -10,7 +10,7 @@ __pycache__/
 
 # tests
 .cache/
-tests/cassettes/test_getting_revisions.test_getting_revisions.json
+tests/cassettes/
 
 # wiki
 apicache/
