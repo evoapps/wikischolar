@@ -12,8 +12,12 @@ def plugin(func):
         except Exception as err:
             msg = 'Error in {} plugin: {}'
             raise PluginError(msg.format(table, err))
+
+        if database:
+            results.to_sql(table, database, if_exists='append', index=False)
         else:
-            results.to_sql(table, results, if_exists='append', index=False)
+            return results
+
 
     PLUGINS[table] = save
     return save

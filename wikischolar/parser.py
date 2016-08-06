@@ -2,7 +2,7 @@ import pandas
 import wikischolar
 
 
-def load_offset(offset):
+def get_offset(offset):
     return getattr(pandas.tseries.offsets, offset)()
 
 
