@@ -24,4 +24,4 @@ throttle.ctrl
 # analysis
 .Rproj.user
 !wikischolarlib/data/
-wikischolar.sqlite
+*.sqlite
