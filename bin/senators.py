@@ -2,8 +2,11 @@
 import sys
 from bs4 import BeautifulSoup
 import pandas
+import wikischolar
 
-soup = BeautifulSoup(sys.stdin, 'lxml')
+title = "List of current United States senators"
+html = wikischolar.util.get_page_html(title)
+soup = BeautifulSoup(html, 'lxml')
 spans = soup.find_all(class_='fn')
 names = [sp.find('a').text for sp in spans]
 articles = pandas.DataFrame(dict(title=names))
