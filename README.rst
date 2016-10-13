@@ -4,13 +4,12 @@ wikischolar
 This research project provides tools for looking up historical article quality
 data for Wikipedia articles using the Wikimedia Foundations Objective Revision
 Evaluation Service (ORES)
-<https://meta.wikimedia.org/wiki/Objective_Revision_Evaluation_Service>.
+<https://meta.wikimedia.org/wiki/Objective_Revision_Evaluation_Service>::
 
     $ git clone git@github.com:evoapps/wikischolar && cd wikischolar
     $ pip install -r requirements.txt
     $ pip install -e .
     $ sch --list  # list available tasks
-
     load          Populate a new wikischolar database with articles to study.
     dump          Dump a table of the (local) wikischolar database.
     revisions     Get all versions of articles and save them in a local db.
@@ -24,14 +23,14 @@ Basic usage
 -----------
 
 To use wikischolar, you can load articles one at a time, but more likely
-you'll want to load a list of articles.
+you'll want to load a list of articles::
 
     $ sch load "Splendid fairywren"
     $ sch load data/articles.csv
 
 This creates a sqlite database called "wikischolar.sqlite" in the current
 directory with a table called "revisions" containing all revisions to
-the articles. To specify a custom database location, add the ``--database`` option.
+the articles. To specify a custom database location, add the ``--database`` option::
 
     $ sch revisions data/articles.csv -d data/wikischolar.sqlite
 
@@ -48,7 +47,7 @@ are saved in a new table in the database called "edits". You can also get
 the number of generations (edits minus reversions) and yearly quality
 predictions from the ORES API. If multiple wikischolar commands are chained
 they will be run in order. You can get a fully populated wikischolar
-db with the following command chain:
+db with the following command chain::
 
     $ sch load data/articles.csv revisions edits qualities generations
 
