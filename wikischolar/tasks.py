@@ -34,27 +34,28 @@ def load(ctx, articles, database=None, table=None, title_col='title'):
     Examples:
         Load an article from it's title:
 
-        >>> load("Splendid fairywren")
+        $ sch load "Splendid fairywren"
 
         By default the articles are stored in a local sqlite database, with
         the default table name "articles". Specify a database name manually
         with the ``database`` option in a custom table if necessary:
 
-        >>> load("Splendid fairywren", database="data/wikischolar.sqlite",
-                 table="birds")
+        $ sch load "Splendid fairywren" \\
+            --database=data/wikischolar.sqlite \\
+            --table=birds
 
         You can include multiple titles if they are stored in a csv.
         If a csv is provided, a column containing article titles is expected.
         By default, the expected name is 'title' but this can be changed:
 
-        >>> load("data/articles.csv")
-        >>> load("data/other-articles.csv", title_col="name")
+        $ sch load data/articles.csv
+        $ sch load data/other-articles.csv --title-col=name
     """
     if unipath.Path(articles).exists():
         articles = pandas.read_csv(articles)                        # might fail
         articles.rename(columns={title_col: 'title'}, inplace=True) # might fail
     else:
-        titles = articles.split(split_char)   # should always produce a list
+        titles = articles.split(',')   # should always produce a list
         articles = pandas.DataFrame({'title': titles})
 
     db = wikischolar.db.connect(database, must_exist=False)
@@ -81,7 +82,12 @@ def dump(ctx, table, select='*', database=None, output=None):
 
     Examples:
 
+        Load and then dump the an articles table.
 
+        $ sch load "Splendid fairywren" -t birds
+        $ sch dump -t birds
+        ,title
+        0,Splendid fairywren
     """
     output = output or sys.stdout
     sql_query = 'SELECT {} FROM {};'.format(select, table)
