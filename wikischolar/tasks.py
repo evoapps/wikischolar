@@ -14,6 +14,13 @@ EDITS_TABLE = 'edits'
 GENERATIONS_TABLE = 'generations'
 VIEWS_TABLE = 'views'
 
+@task
+def get_table(ctx, title, output=None):
+    """Get and parse a table from a MediaWiki text."""
+    data = wikischolar.get.get_table(title)
+    output = output or sys.stdout
+    data.to_csv(output, index=False)
+
 
 @task
 def load(ctx, articles, database=None, table=None, title_col='title'):
@@ -192,4 +199,5 @@ namespace = Collection(
     qualities,
     edits,
     generations,
+    get_table,
 )
