@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+sch get_page "List_of_current_United_States_Senators" --html |
+  bin/senators.py

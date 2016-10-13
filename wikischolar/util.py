@@ -3,12 +3,19 @@ import sys
 import pywikibot
 import pandas
 import unipath
+import requests
 
 
 def get_page(title):
     site = pywikibot.Site('en', 'wikipedia')
     page = pywikibot.Page(site, title)
     return page
+
+def get_page_html(title):
+    slug = title.replace(' ', '_')
+    url = 'https://en.wikipedia.org/wiki/{slug}'
+    response = requests.get(url.format(slug=slug))
+    return response.content.decode('utf-8')
 
 
 def mkdir(dst):
