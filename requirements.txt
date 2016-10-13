@@ -31,3 +31,4 @@ traitlets==4.2.1
 twine==1.6.5
 Unipath==1.1
 virtualenv==15.0.1
+lxml==3.6.4
