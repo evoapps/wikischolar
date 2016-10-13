@@ -8,3 +8,5 @@ requests==2.9.1
 requests-toolbelt==0.6.0
 Unipath==1.1
 -e git+git@github.com:pedmiston/invoke.git@3dc0dd7aad6df48710c64db3e951da251f3b89f5#egg=invoke
+lxml==3.6.4
+bs4==0.0.1

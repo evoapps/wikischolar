@@ -14,6 +14,28 @@ EDITS_TABLE = 'edits'
 GENERATIONS_TABLE = 'generations'
 VIEWS_TABLE = 'views'
 
+@task
+def get_page(ctx, title, html=False, output=None):
+    """Get the MedaWiki text for a Wikipedia page."""
+    if html:
+        text = wikischolar.util.get_page_html(title)
+    else:
+        page = wikischolar.util.get_page(title)
+        text = page.get()
+    output = open(output, 'w') if output else sys.stdout
+    output.write(text)
+    try:
+        output.close()
+    except ValueError:
+        pass
+
+@task
+def get_table(ctx, title, n_table=0, output=None):
+    """Get and parse a table from a MediaWiki text."""
+    data = wikischolar.get.get_table(title, n_table)
+    output = output or sys.stdout
+    data.to_csv(output, index=False)
+
 
 @task
 def load(ctx, articles, database=None, table=None, title_col='title'):
@@ -198,4 +220,6 @@ namespace = Collection(
     qualities,
     edits,
     generations,
+    get_table,
+    get_page,
 )
