@@ -10,6 +10,8 @@ import wikischolar
 
 ARTICLES_TABLE = 'articles'
 REVISIONS_TABLE = 'revisions'
+QUALITIES_TABLE = 'qualities'
+BULK_QUALITIES_TABLE = 'allqualities'
 EDITS_TABLE = 'edits'
 GENERATIONS_TABLE = 'generations'
 VIEWS_TABLE = 'views'
@@ -161,15 +163,16 @@ def edits(ctx, database=None):
 
 
 @task
-def qualities(ctx, database=None, resample_offset='YearEnd'):
+def qualities(ctx, database=None, table=None, resample_offset='YearEnd'):
     """Filter a subset of revisions and save the results in a new table."""
     offset = getattr(pandas.tseries.offsets, resample_offset)()
+    table = table or QUALITIES_TABLE
     db = wikischolar.db.connect(database)
     try:
         sample = wikischolar.revisions.resample_revisions(db, offset)
         sample = sample[['title', 'timestamp', 'revid']]
         qualities = wikischolar.quality.wp10_qualities(sample)
-        qualities.to_sql('qualities', db, if_exists='append', index=False)
+        qualities.to_sql(table, db, if_exists='append', index=False)
     finally:
         db.close()
 
@@ -186,30 +189,42 @@ def generations(ctx, database=None):
         db.close()
 
 
-# @task(aliases=['views'],
-#       help=dict(articles=ARTICLES, output=OUTPUT, single=SINGLE))
-# def yearly_page_views(articles, output=None, single=False):
-#     """Get yearly page view sums for each article."""
-#     articles = read(articles, single, 'title')
-#     totals = views.yearly_page_views(articles)
-#     save(totals, output)
+@task
+def download_bulk_qualities(ctx, database=None, table=None, force=False,
+                            i_have_enough_space=False, keep=False):
+    """Download a 36gb database of all Wikipedia quality estimates."""
+    url = 'https://ndownloader.figshare.com/files/6059502'
+    bz2 = Path(data_dir, 'article_qualities.tsv.bz2')
+    tsv = Path(data_dir, 'article_qualities.tsv')
+    table = table or BULK_QUALITIES_TABLE
 
+    # Try to prevent accidentally downloading too big a file.
+    if not i_have_enough_space:
+        cmd = "df -g {} | awk '/\//{ print $4 }'"
+        try:
+            gb_available = int(run(cmd.format(data_dir)).stdout)
+            if gb_available < 100:
+                raise NotEnoughGBAvailable
+        except:
+            raise NotEnoughGBAvailable
+        else:
+            logger.info('Rest easy, you have enough space.')
+    else:
+        logger.info('Skipping space check. Good luck soldier!')
 
-# @task
-# def clean():
-#     """Remove junk files."""
-#     cmd = 'rm -rf {}'
-#     patterns = [
-#         # wiki
-#         'apicache',
-#         'throttle.ctrl',
-#         '*.lwp',
-#
-#         # knitr
-#         '*-figs/',
-#     ]
-#     for pattern in patterns:
-#         run(cmd.format(pattern))
+    logger.info('Downloading and decompressing.')
+    run('wget {url} > {bz2} && bunzip2 {bz2}'.format(url=url, bz2=bz2))
+
+    logger.info('Importing into sqlite.')
+    db = wikischolar.db.connect(database, must_exist=False)
+    try:
+        for chunk in pandas.read_table(tsv, chunksize=100000):
+            chunk.to_sql(table, db, if_exists='append', index=False)
+    finally:
+        db.close()
+
+    if not keep:
+        tsv.remove()
 
 
 namespace = Collection(
@@ -218,6 +233,7 @@ namespace = Collection(
     execute,
     revisions,
     qualities,
+    download_bulk_qualities,
     edits,
     generations,
     get_table,

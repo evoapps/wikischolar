@@ -4,20 +4,26 @@ wikischolar
 This research project provides tools for looking up historical article quality
 data for Wikipedia articles using the Wikimedia Foundations Objective Revision
 Evaluation Service (ORES)
-<https://meta.wikimedia.org/wiki/Objective_Revision_Evaluation_Service>::
+<https://meta.wikimedia.org/wiki/Objective_Revision_Evaluation_Service>.
+
+Clone and install (recommended)
+-------------------------------
+
+The recommended installation method is to clone the repo and use pip
+to install it in editable form::
 
     $ git clone git@github.com:evoapps/wikischolar && cd wikischolar
     $ pip install -r requirements.txt
     $ pip install -e .
-    $ sch --list  # list available tasks
-    load          Populate a new wikischolar database with articles to study.
-    dump          Dump a table of the (local) wikischolar database.
-    revisions     Get all versions of articles and save them in a local db.
-    edits         Tally the number of yearly edits from a list of articles.
-    generations   Count the number of generations (edits excluding reversions).
-    qualities     Filter a subset of revisions and save the results in a new
-                  table.
-    execute       Execute a command on the wikischolar db.
+    # sch -l  # list available tasks
+
+Install from github
+-------------------
+
+Alternatively you can try to install directly from github with pip::
+
+    $ pip install git+git://github.com/evoapps/wikischolar.git#egg=wikischolar
+    $ sch -l
 
 Basic usage
 -----------
@@ -27,12 +33,25 @@ you'll want to load a list of articles::
 
     $ sch load "Splendid fairywren"
     $ sch load data/articles.csv
+    # creates ./wikischolar.sqlite
 
 This creates a sqlite database called "wikischolar.sqlite" in the current
-directory with a table called "revisions" containing all revisions to
-the articles. To specify a custom database location, add the ``--database`` option::
+directory with a table called "articles" containing all the articles that
+you want to study. To specify a custom database location, add the
+``--database`` option, or set the WIKISCHOLAR_DB environment variable::
 
     $ sch revisions data/articles.csv -d data/wikischolar.sqlite
+    # or
+    $ export WIKISCHOLAR_DB=data/wikischolar.sqlite
+    $ sch revisions data/articles.csv
+
+The next step is to download the revisions for the articles that you
+want to study. Do this with the **revisions** command. By default,
+**revisions** gets the revisions for all articles in the "articles"
+table, and puts them in a table called "revisions". These options
+can be modified to create different tables::
+
+    $ sch revisions
 
 **Be careful**. I sampled 1000 random Featured Articles and the full text
 revisions was about 40gb, and it was not fun to work with. Although it
@@ -50,6 +69,20 @@ they will be run in order. You can get a fully populated wikischolar
 db with the following command chain::
 
     $ sch load data/articles.csv revisions edits qualities generations
+
+Qualities
+---------
+
+Qualities are downloaded via the ORES API which provides quality estimates
+based on Wikipedia article revids. This may get tedious for moderate samples
+of articles. Luckily, the WMF has made a sqlite database containing all
+article quality estimates available for download.
+
+**Warning** the entire db of article quality estimates is about 40gb.
+Before this data is downloaded, a quick check of the available space
+is done, but be aware of any space constraints on your machine.
+
+    $ sch download_bulk_articles -d data/bulk_qualities.sqlite
 
 1000 random articles
 --------------------

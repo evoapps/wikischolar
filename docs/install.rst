@@ -22,14 +22,14 @@ Install wikischolarlib
 ======================
 
 wikischolarlib is an R package for bundling up data collected
-using wikischolar. To install the wikischolarlib you can use the 
+using wikischolar. To install the wikischolarlib you can use the
 R package devtools and install it from github::
 
-    devtools::install_github("wikischolar", "evoapps", subdir = "wikischolarlib")
+    devtools::install_github("evoapps/wikischolar", subdir = "wikischolarlib")
 
 Right now, wikischolarlib is included with the wikischolar project.
-If you modify your local copy of wikischolarlib, you can install
-the modified version using devtools as well::
+If you want to modify your local copy of wikischolarlib, you can install
+the modified version using devtools::
 
     # working directory is wikischolar project root
     devtools::install("wikischolarlib")
