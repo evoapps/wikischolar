@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# senators.py - get the names of the current US senators as a csv
 import sys
 from bs4 import BeautifulSoup
 import pandas
