@@ -1,0 +1,27 @@
+digraph {
+    label="The Bold, Revert, Discuss Cycle\nof Wikipedia article editing";
+    fontname=Helvetica;
+    labelloc=t;
+    rankdir = LR;
+    node[shape=circle; fontname=helvetica, style=filled, color="lightgray"];
+    edge[dir=none];
+
+    x -> y[dir=forward];
+    y -> {a, b, c, d};
+    c -> z;
+    z -> o[dir=forward];
+
+    x[style=invis];
+    y[label=""];
+    z[label=""];
+    o[style=invis];
+
+    // Parent
+    y[fillcolor="#8da0cb", color="#8da0cb"];
+
+    // Selected
+    c[fillcolor="#66c2a5", color="#66c2a5"];
+
+    // Extant
+    z[fillcolor="#fc8d62", color="#fc8d62"];
+}
