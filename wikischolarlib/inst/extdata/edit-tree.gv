@@ -1,5 +1,5 @@
 digraph {
-    label="The Bold, Revert, Discuss Cycle\nof Wikipedia article editing";
+    label="Results of BRD cycle editing";
     fontname=Helvetica;
     labelloc=t;
     rankdir = LR;
