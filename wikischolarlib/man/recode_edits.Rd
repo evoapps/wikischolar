@@ -16,4 +16,3 @@ The following columns will be created:
   \item edits_sqr. The edits_sum variable squared.
 }
 }
-

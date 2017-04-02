@@ -15,4 +15,3 @@ The following columns will be created:
   \item age_sqr. The age variable squared.
 }
 }
-

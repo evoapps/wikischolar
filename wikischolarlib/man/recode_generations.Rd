@@ -17,4 +17,3 @@ The following columns will be created:
   \item generations_sum_sqr. The generations_sum variable squared.
 }
 }
-
