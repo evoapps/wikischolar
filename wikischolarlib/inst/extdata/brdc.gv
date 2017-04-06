@@ -1,0 +1,19 @@
+digraph {
+    layout="circo";
+    splines=curved;
+    fontname=Helvetica;
+    labelloc=t;
+    rankdir = LR;
+    node[shape=circle, fontname=helvetica, width=1, penwidth=0];
+
+    label="The BRD cycle editing strategy";
+
+    // Start with discuss node on the bottom
+    discuss;
+
+    bold -> revert -> discuss -> bold;
+
+    bold[label="Bold edit"];  // fillcolor="#fc8d62", color="#fc8d62"];
+    revert[label="Revert"];   // fillcolor="#66c2a5", color="#66c2a5"];
+    discuss[label="Discuss"]; // fillcolor="#8da0cb", color="#8da0cb"];
+}

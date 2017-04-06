@@ -17,4 +17,3 @@ predictors in the model.}
 \description{
 Format the predicted values from an lmer model.
 }
-

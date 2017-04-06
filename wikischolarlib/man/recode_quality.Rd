@@ -23,4 +23,3 @@ data("random1000")
 random1000 <- recode_quality(random1000)
 
 }
-
