@@ -2,8 +2,8 @@ digraph {
     label="Results of BRD cycle editing";
     fontname=Helvetica;
     labelloc=t;
-    rankdir = LR;
-    node[shape=circle; fontname=helvetica, style=filled, color="lightgray"];
+    rankdir=LR;
+    node[shape=circle; fontname=helvetica, style=filled];
     edge[dir=none];
 
     x -> y[dir=forward];
@@ -17,11 +17,11 @@ digraph {
     o[style=invis];
 
     // Parent
-    y[fillcolor="#8da0cb", color="#8da0cb"];
+    y[fillcolor="#8da0cb"];
 
     // Selected
-    c[fillcolor="#66c2a5", color="#66c2a5"];
+    c[fillcolor="#8da0cb"];
 
     // Extant
-    z[fillcolor="#fc8d62", color="#fc8d62"];
+    z[fillcolor="#8da0cb"];
 }
